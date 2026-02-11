@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Inscription ASP Gymnastique</title>
 <style>
-/* Fond plein écran */
+/* Fond bleu clair plein écran */
 html, body {
     height: 100%;
     width: 100%;
@@ -16,16 +16,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #f0f4f8, #d0e6f7);
+    background: #d0e6f7;  /* fond bleu clair */
     font-family: Arial, sans-serif;
 }
 
-/* Formulaire */
+/* Formulaire intégré sur le fond */
 form {
-    background: white;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    background: transparent;  /* plus de fond blanc */
+    padding: 0;
+    box-shadow: none;
     width: 90%;
     max-width: 600px;
     text-align: center;
@@ -37,7 +36,6 @@ form img {
     height: auto;
     border-radius: 50%;
     margin-bottom: 20px;
-    border: 3px solid #3498db;
 }
 
 /* Titre */
@@ -54,11 +52,11 @@ h2 {
 
 input {
     width: 100%;
-    padding: 12px 40px 12px 12px; /* espace pour icône */
+    padding: 12px 40px 12px 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
-    transition: 0.3s;
+    background: #ffffffcc; /* blanc semi-transparent pour lisibilité */
 }
 
 input:focus {
@@ -165,7 +163,6 @@ button:hover {
 <script>
 // Icônes interactives ✓/✖
 const inputs = document.querySelectorAll('.input-group input');
-
 inputs.forEach(input => {
     input.addEventListener('input', () => {
         const parent = input.parentElement;

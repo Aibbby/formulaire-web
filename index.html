@@ -2,13 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Inscription APP Gymnastique</title>
+<title>Inscription ASP Gymnastique</title>
 <style>
-/* Fond et centrage sur toute la page */
+/* Fond plein écran */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: Arial, sans-serif;
-    min-height: 100vh;
-    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,8 +26,8 @@ form {
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    width: 90%;          /* presque toute la largeur sur mobile */
-    max-width: 500px;    /* limite sur desktop */
+    width: 90%;
+    max-width: 500px;
     text-align: center;
 }
 
@@ -40,7 +45,7 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* Champs avec icônes */
+/* Champs et icônes */
 .input-group {
     position: relative;
     margin-bottom: 20px;
@@ -210,4 +215,3 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
-

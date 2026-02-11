@@ -1,95 +1,92 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Formulaire d'inscription</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        input, textarea { width: 300px; padding: 5px; margin-bottom: 10px; }
-        label { display: block; margin-top: 10px; }
-        .error { color: red; }
-        .success { color: green; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<title>Inscription Gymnastique</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 50px;
+}
+form {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px;
+}
+form h2 {
+    text-align: center;
+    color: #2c3e50;
+}
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: #27ae60;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #2ecc71;
+}
+.success {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+}
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+</style>
 </head>
 <body>
 
-<h2>Formulaire d'inscription</h2>
-
-<form id="monFormulaire" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
-    <label>Nom :</label>
-    <input type="text" name="nom" required>
-
-    <label>Prénom :</label>
-    <input type="text" name="prenom" required>
-
-    <label>Téléphone :</label>
-    <input type="text" name="tel" required placeholder="Ex: 0612345678">
-
-    <label>Email :</label>
-    <input type="email" name="email" required placeholder="exemple@mail.com">
-
-    <label>Adresse :</label>
-    <textarea name="adresse" required></textarea>
-
-    <label>Code postal :</label>
-    <input type="text" name="codepostal" required placeholder="5 chiffres">
-
-    <label>Ville :</label>
-    <input type="text" name="ville" required>
-
-    <button type="submit">Envoyer</button>
+<form id="inscriptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
+    <h2>Inscription à la Gymnastique</h2>
+    <input type="text" name="nom" placeholder="Nom" required>
+    <input type="text" name="prenom" placeholder="Prénom" required>
+    <input type="tel" name="tel" placeholder="Téléphone (10 chiffres)" pattern="[0-9]{10}" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="text" name="adresse" placeholder="Adresse" required>
+    <input type="text" name="codepostal" placeholder="Code postal (5 chiffres)" pattern="[0-9]{5}" required>
+    <input type="text" name="ville" placeholder="Ville" required>
+    <button type="submit">S'inscrire</button>
+    <div id="message"></div>
 </form>
 
-<div id="message"></div>
-
 <script>
-document.getElementById('monFormulaire').addEventListener('submit', function(e){
+document.getElementById('inscriptionForm').addEventListener('submit', function(e){
     e.preventDefault();
-
-    let nom = this.nom.value.trim();
-    let prenom = this.prenom.value.trim();
-    let tel = this.tel.value.trim();
-    let email = this.email.value.trim();
-    let adresse = this.adresse.value.trim();
-    let codepostal = this.codepostal.value.trim();
-    let ville = this.ville.value.trim();
-
-    let error = "";
-
-    // Vérification téléphone 10 chiffres
-    if(!/^\d{10}$/.test(tel)) error += "Téléphone invalide (10 chiffres).<br>";
-
-    // Vérification code postal 5 chiffres
-    if(!/^\d{5}$/.test(codepostal)) error += "Code postal invalide (5 chiffres).<br>";
-
-    // Vérification email
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) error += "Email invalide.<br>";
-
-    if(error !== "") {
-        document.getElementById('message').innerHTML = "<div class='error'>"+error+"</div>";
-        return;
-    }
-
-    // Si tout est ok, envoyer via fetch (AJAX) pour rester sur la page
-	fetch(this.action, {
-		method: 'POST',
-		body: new FormData(this)
-	})
-	.then(response => {
-		if(!response.ok) throw new Error("HTTP error " + response.status);
-		return response.text();
-	})
-	.then(data => {
-		document.getElementById('message').innerHTML =
-			"<div class='success'>" + data + "</div>";
-	})
-	.catch(err => {
-		console.error(err); // pour voir l’erreur réelle
-		document.getElementById('message').innerHTML =
-			"<div class='error'>Erreur lors de l'envoi</div>";
-	});
-
-	});
+    fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this)
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('message').innerHTML = "<div class='success'>✅ " + data + "</div>";
+    })
+    .catch(err => {
+        document.getElementById('message').innerHTML = "<div class='error'>❌ Oops… une erreur est survenue</div>";
+        console.error(err);
+    });
+});
 </script>
 
 </body>

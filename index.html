@@ -2,26 +2,90 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Formulaire de contact</title>
+    <title>Formulaire d'inscription</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        input, textarea { width: 300px; padding: 5px; margin-bottom: 10px; }
+        label { display: block; margin-top: 10px; }
+        .error { color: red; }
+        .success { color: green; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-<h2>Formulaire</h2>
+<h2>Formulaire d'inscription</h2>
 
-<form method="POST" action="https://asdgym.alwaysdata.net/insert.php">
-    <label>Nom :</label><br>
-    <input type="text" name="nom" required><br><br>
+<form id="monFormulaire" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
+    <label>Nom :</label>
+    <input type="text" name="nom" required>
 
-    <label>Email :</label><br>
-    <input type="email" name="email" required><br><br>
+    <label>Prénom :</label>
+    <input type="text" name="prenom" required>
 
-    <label>Message :</label><br>
-    <textarea name="message"></textarea><br><br>
+    <label>Téléphone :</label>
+    <input type="text" name="tel" required placeholder="Ex: 0612345678">
+
+    <label>Email :</label>
+    <input type="email" name="email" required placeholder="exemple@mail.com">
+
+    <label>Adresse :</label>
+    <textarea name="adresse" required></textarea>
+
+    <label>Code postal :</label>
+    <input type="text" name="codepostal" required placeholder="5 chiffres">
+
+    <label>Ville :</label>
+    <input type="text" name="ville" required>
 
     <button type="submit">Envoyer</button>
 </form>
 
+<div id="message"></div>
+
+<script>
+document.getElementById('monFormulaire').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    let nom = this.nom.value.trim();
+    let prenom = this.prenom.value.trim();
+    let tel = this.tel.value.trim();
+    let email = this.email.value.trim();
+    let adresse = this.adresse.value.trim();
+    let codepostal = this.codepostal.value.trim();
+    let ville = this.ville.value.trim();
+
+    let error = "";
+
+    // Vérification téléphone 10 chiffres
+    if(!/^\d{10}$/.test(tel)) error += "Téléphone invalide (10 chiffres).<br>";
+
+    // Vérification code postal 5 chiffres
+    if(!/^\d{5}$/.test(codepostal)) error += "Code postal invalide (5 chiffres).<br>";
+
+    // Vérification email
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) error += "Email invalide.<br>";
+
+    if(error !== "") {
+        document.getElementById('message').innerHTML = "<div class='error'>"+error+"</div>";
+        return;
+    }
+
+    // Si tout est ok, envoyer via fetch (AJAX) pour rester sur la page
+    fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this)
+    })
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('message').innerHTML = "<div class='success'>"+data+"</div>";
+        // Redirection automatique après 3 secondes
+        setTimeout(() => { window.location.href = "https://tonlien.github.io/formulaire-web/"; }, 3000);
+    })
+    .catch(err => {
+        document.getElementById('message').innerHTML = "<div class='error'>Erreur lors de l'envoi</div>";
+    });
+});
+</script>
+
 </body>
-
 </html>
-

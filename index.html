@@ -71,20 +71,25 @@ document.getElementById('monFormulaire').addEventListener('submit', function(e){
     }
 
     // Si tout est ok, envoyer via fetch (AJAX) pour rester sur la page
-    fetch(this.action, {
-        method: 'POST',
-        body: new FormData(this)
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('message').innerHTML = "<div class='success'>"+data+"</div>";
-        // Redirection automatique après 3 secondes
-        setTimeout(() => { window.location.href = "https://tonlien.github.io/formulaire-web/"; }, 3000);
-    })
-    .catch(err => {
-        document.getElementById('message').innerHTML = "<div class='error'>Erreur lors de l'envoi</div>";
-    });
-});
+	fetch(this.action, {
+		method: 'POST',
+		body: new FormData(this)
+	})
+	.then(response => {
+		if(!response.ok) throw new Error("HTTP error " + response.status);
+		return response.text();
+	})
+	.then(data => {
+		document.getElementById('message').innerHTML =
+			"<div class='success'>" + data + "</div>";
+	})
+	.catch(err => {
+		console.error(err); // pour voir l’erreur réelle
+		document.getElementById('message').innerHTML =
+			"<div class='error'>Erreur lors de l'envoi</div>";
+	});
+
+	});
 </script>
 
 </body>

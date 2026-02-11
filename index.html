@@ -22,7 +22,7 @@ body {
 
 /* Formulaire intégré sur le fond */
 form {
-    background: transparent;  /* plus de fond blanc */
+    background: transparent;  /* pas de fond blanc */
     padding: 0;
     box-shadow: none;
     width: 90%;
@@ -52,11 +52,13 @@ h2 {
 
 input {
     width: 100%;
+    box-sizing: border-box; /* inclut padding et border dans la largeur */
     padding: 12px 40px 12px 12px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
-    background: #ffffffcc; /* blanc semi-transparent pour lisibilité */
+    background: #ffffffcc; /* semi-transparent pour lisibilité */
+    transition: 0.3s;
 }
 
 input:focus {
@@ -80,14 +82,16 @@ input:focus {
 
 /* Bouton */
 button {
-    width: 100%;
+    width: 100%;            /* même largeur que les champs */
+    box-sizing: border-box;  /* inclut padding et border */
     padding: 14px;
-    background: linear-gradient(45deg, #e74c3c, #3498db, #ffffff);
-    border: none;
     border-radius: 8px;
-    color: white;
-    font-size: 18px;
+    border: none;
+    font-size: 16px;
     cursor: pointer;
+    color: white;
+    background: linear-gradient(45deg, #e74c3c, #3498db, #ffffff);
+    margin-top: 10px;
     transition: 0.3s;
 }
 

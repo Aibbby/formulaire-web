@@ -22,11 +22,19 @@ form {
     position: relative;
     overflow: hidden;
 }
+
+/* Logo toujours visible */
 form img {
-    width: 100px;
+    width: 150px;          /* taille un peu plus grande pour tester */
+    height: auto;
     margin-bottom: 20px;
-    border-radius: 50%;
+    border-radius: 12px;   /* coins arrondis mais pas rond complet */
+    border: 2px solid #3498db; /* bordure pour vérifier visibilité */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
+
 h2 {
     color: #2c3e50;
     margin-bottom: 20px;
@@ -92,17 +100,14 @@ fieldset.active {
     color: red;
     opacity: 1;
 }
-.check {
-    float: right;
-    margin-right: 8px;
-    font-weight: bold;
-}
 </style>
 </head>
 <body>
 
 <form id="inscriptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
-    <img src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASP Gymnastique">
+    <!-- Logo centralisé et visible -->
+    <img src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASP Gymnastique" onerror="this.src='https://via.placeholder.com/150?text=Logo+Manquant'">
+    
     <h2>Inscription ASP Gymnastique</h2>
     <div class="progress-bar" id="progressBar"></div>
 
@@ -145,7 +150,6 @@ function showFieldset(index){
 }
 
 next1.addEventListener('click', ()=>{
-    // Vérifie si les champs sont valides
     const inputs = fieldsets[0].querySelectorAll('input');
     for(let inp of inputs){
         if(!inp.checkValidity()) {
@@ -162,7 +166,6 @@ prev.addEventListener('click', ()=>{
     showFieldset(current);
 });
 
-// Envoi formulaire
 form.addEventListener('submit', function(e){
     e.preventDefault();
     const msg = document.getElementById('message');

@@ -114,9 +114,9 @@ button:hover {
 </head>
 <body>
 
-<form id="PréinscriptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
+<form id="PrériptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
     <img src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASD Gymnastique" onerror="this.src='https://via.placeholder.com/150?text=Logo'">
-    <h2>Préinscription ASD Gymnastique loisirs</h2>
+    <h2>Préription ASD Gymnastique loisirs</h2>
 
     <div class="input-group">
         <input type="text" name="nom" placeholder="Nom de l'enfant" required>
@@ -173,6 +173,8 @@ button:hover {
         <label><input type="checkbox" name="creneaux[]" value="Mercredi 14h-15h"> Mercredi 14h–15h</label><br>
         <label><input type="checkbox" name="creneaux[]" value="Samedi 10h-11h"> Samedi 10h–11h</label>
     </div>
+    
+    <div id="message" style="color:red; margin-bottom:10px;"></div>
 
     <button type="submit">S'inscrire</button>
     <div id="message"></div>
@@ -214,11 +216,23 @@ cbs.forEach(cb => {
     });
 });
 
-// Envoi formulaire
-const form = document.getElementById('inscriptionForm');
+// Envoi formulaire avec contrôle créneaux
+const form = document.getElementById('inscriptionForm'); // ou 'PréinscriptionForm' selon ton HTML
 form.addEventListener('submit', function(e){
     e.preventDefault();
+
     const msg = document.getElementById('message');
+
+    // --- Vérification des créneaux ---
+    const checkedCreneaux = document.querySelectorAll('input[name="creneaux[]"]:checked');
+    if(checkedCreneaux.length === 0){
+        msg.className = 'error show';
+        msg.innerHTML = "❌ Veuillez sélectionner au moins un créneau.";
+        return; // stoppe l'envoi
+    }
+
+    // --- Si tout est bon, on envoie le formulaire ---
+    msg.className = ''; // efface message précédent
     fetch(this.action, {
         method: 'POST',
         body: new FormData(this)
@@ -234,10 +248,12 @@ form.addEventListener('submit', function(e){
         msg.innerHTML = "❌ Oops… une erreur est survenue";
     });
 });
+
 </script>
 
 </body>
 </html>
+
 
 
 

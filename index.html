@@ -166,6 +166,14 @@ button:hover {
         <span class="icon invalid">✖</span>
     </div>
 
+    <div class="input-group" style="text-align:left">
+        <strong>Créneaux souhaités (2 max)</strong><br><br>
+        <label><input type="checkbox" name="creneaux[]" value="Lundi 17h-18h"> Lundi 17h–18h</label><br>
+        <label><input type="checkbox" name="creneaux[]" value="Mardi 18h-19h"> Mardi 18h–19h</label><br>
+        <label><input type="checkbox" name="creneaux[]" value="Mercredi 14h-15h"> Mercredi 14h–15h</label><br>
+        <label><input type="checkbox" name="creneaux[]" value="Samedi 10h-11h"> Samedi 10h–11h</label>
+    </div>
+
     <button type="submit">S'inscrire</button>
     <div id="message"></div>
 </form>
@@ -195,6 +203,17 @@ inputs.forEach(input => {
     });
 });
 
+// limite 2 créneaux
+const cbs = document.querySelectorAll('input[name="creneaux[]"]');
+cbs.forEach(cb => {
+    cb.addEventListener('change', () => {
+        if (document.querySelectorAll('input[name="creneaux[]"]:checked').length > 2) {
+            cb.checked = false;
+            alert("2 créneaux maximum");
+        }
+    });
+});
+
 // Envoi formulaire
 const form = document.getElementById('inscriptionForm');
 form.addEventListener('submit', function(e){
@@ -219,6 +238,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

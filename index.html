@@ -182,7 +182,7 @@ button:hover {
 
 <script>
 // Icônes interactives ✓/✖
-const inputs = document.querySelectorAll('.input-group input');
+const inputs = document.querySelectorAll('.input-group input:not([type="checkbox"])');
 inputs.forEach(input => {
     input.addEventListener('input', () => {
         const parent = input.parentElement;
@@ -193,37 +193,27 @@ inputs.forEach(input => {
             parent.classList.add('invalid');
             parent.classList.remove('valid');
         }
-        const checkboxes = document.querySelectorAll('input[name="creneaux[]"]');
-
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', () => {
-                const checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
-                if (checked.length > 2) {
-                    cb.checked = false;
-                    alert("Vous pouvez sélectionner 2 créneaux maximum");
-                }
     });
 });
 
-// limite 2 créneaux
+// Limite à 2 créneaux max
 const cbs = document.querySelectorAll('input[name="creneaux[]"]');
 cbs.forEach(cb => {
     cb.addEventListener('change', () => {
-        if (document.querySelectorAll('input[name="creneaux[]"]:checked').length > 2) {
+        const checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
+        if (checked.length > 2) {
             cb.checked = false;
-            alert("2 créneaux maximum");
+            alert("Vous pouvez sélectionner 2 créneaux maximum");
         }
     });
 });
 
 // Envoi formulaire avec contrôle créneaux
-const form = document.getElementById('inscriptionForm'); // ou 'PréinscriptionForm' selon ton HTML
+const form = document.getElementById('inscriptionForm');
 const msg = document.getElementById('message');
-        
+
 form.addEventListener('submit', function(e){
     e.preventDefault(); // bloque l'envoi normal
-
-    const msg = document.getElementById('message');
 
     // --- Vérification des créneaux ---
     const checkedCreneaux = document.querySelectorAll('input[name="creneaux[]"]:checked');
@@ -250,11 +240,11 @@ form.addEventListener('submit', function(e){
         msg.innerHTML = "❌ Oops… une erreur est survenue";
     });
 });
-
 </script>
 
 </body>
 </html>
+
 
 
 

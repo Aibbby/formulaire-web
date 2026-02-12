@@ -243,23 +243,18 @@ form.addEventListener('submit', function(e){
         parent.classList.remove('valid');
         parent.classList.remove('invalid');
     });
-        .then(data => {
-    msg.className = 'success show';
-    msg.innerHTML = "✅ Préinscription réussie !";
+    .then(data => {
+    // Ouvre la page de remerciement dans un nouvel onglet
+    window.open("validationpreinscri.html", "_blank");
 
-    // Vider les champs
+    // Optionnel : vider le formulaire
     form.reset();
     inputs.forEach(input => {
         const parent = input.parentElement;
         parent.classList.remove('valid', 'invalid');
     });
-
-    // ---- REDIRECTION ----
-    // Redirection vers la page de remerciement après 1 seconde
-    setTimeout(() => {
-        window.location.href = "validationpreinscri.html";
-    }, 1000); // 1000 ms = 1 seconde
 })
+
 
     })
     .catch(err => {
@@ -272,6 +267,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

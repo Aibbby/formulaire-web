@@ -114,9 +114,9 @@ button:hover {
 </head>
 <body>
 
-<form id="PrériptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
+<form id="PréinscriptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
     <img src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASD Gymnastique" onerror="this.src='https://via.placeholder.com/150?text=Logo'">
-    <h2>Préription ASD Gymnastique loisirs</h2>
+    <h2>Préinscription ASD Gymnastique loisirs</h2>
 
     <div class="input-group">
         <input type="text" name="nom" placeholder="Nom de l'enfant" required>
@@ -218,8 +218,10 @@ cbs.forEach(cb => {
 
 // Envoi formulaire avec contrôle créneaux
 const form = document.getElementById('inscriptionForm'); // ou 'PréinscriptionForm' selon ton HTML
+const msg = document.getElementById('message');
+        
 form.addEventListener('submit', function(e){
-    e.preventDefault();
+    e.preventDefault(); // bloque l'envoi normal
 
     const msg = document.getElementById('message');
 
@@ -253,6 +255,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

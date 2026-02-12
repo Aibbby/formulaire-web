@@ -243,6 +243,24 @@ form.addEventListener('submit', function(e){
         parent.classList.remove('valid');
         parent.classList.remove('invalid');
     });
+        .then(data => {
+    msg.className = 'success show';
+    msg.innerHTML = "✅ Préinscription réussie !";
+
+    // Vider les champs
+    form.reset();
+    inputs.forEach(input => {
+        const parent = input.parentElement;
+        parent.classList.remove('valid', 'invalid');
+    });
+
+    // ---- REDIRECTION ----
+    // Redirection vers la page de remerciement après 1 seconde
+    setTimeout(() => {
+        window.location.href = "validationpreinscri.html";
+    }, 1000); // 1000 ms = 1 seconde
+})
+
     })
     .catch(err => {
         console.error(err);
@@ -254,6 +272,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

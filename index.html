@@ -233,6 +233,16 @@ form.addEventListener('submit', function(e){
     .then(data => {
         msg.className = 'success show';
         msg.innerHTML = "✅ " + data;
+
+    // ---- Vider les champs ----
+    form.reset();
+
+    // ---- Optionnel : retirer les icônes de validation ----
+    inputs.forEach(input => {
+        const parent = input.parentElement;
+        parent.classList.remove('valid');
+        parent.classList.remove('invalid');
+    });
     })
     .catch(err => {
         console.error(err);
@@ -244,6 +254,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

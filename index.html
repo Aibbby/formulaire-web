@@ -235,26 +235,29 @@ form.addEventListener('submit', function(e){
         msg.className = 'success show';
         msg.innerHTML = data;
 
-    // ---- Vider les champs ----
-    form.reset();
+        // ---- Vider les champs ----
+        form.reset();
+    
+        // ---- Optionnel : retirer les icônes de validation ----
+        inputs.forEach(input => {
+            const parent = input.parentElement;
+            parent.classList.remove('valid');
+            parent.classList.remove('invalid');
+        });
+        // Ouvre la page de remerciement dans un nouvel onglet
+        window.open("validationpreinscri.html", "_blank");
+    
+        // Optionnel : vider le formulaire
+        form.reset();
+        inputs.forEach(input => {
+            const parent = input.parentElement;
+            parent.classList.remove('valid', 'invalid');
+        })
 
-    // ---- Optionnel : retirer les icônes de validation ----
-    inputs.forEach(input => {
-        const parent = input.parentElement;
-        parent.classList.remove('valid');
-        parent.classList.remove('invalid');
-    });
-    .then(data => {
-    // Ouvre la page de remerciement dans un nouvel onglet
-    window.open("validationpreinscri.html", "_blank");
-
-    // Optionnel : vider le formulaire
-    form.reset();
-    inputs.forEach(input => {
-        const parent = input.parentElement;
-        parent.classList.remove('valid', 'invalid');
-    });
-})
+        // Puis rediriger après 1-2 secondes
+        setTimeout(() => {
+            window.location.href = "merci.html";
+        }, 1000); // 1 seconde d'attente
 
 
     })
@@ -268,6 +271,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

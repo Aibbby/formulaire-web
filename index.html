@@ -131,7 +131,7 @@ button:hover {
     </div>
 
     <div class="input-group">
-        <input type="text" name="datenaissance" placeholder="Date de naissance de l'enfant" required>
+        <input type="date" name="datenaissance" placeholder="Date de naissance de l'enfant" required>
         <span class="icon valid">✓</span>
         <span class="icon invalid">✖</span>
     </div>
@@ -183,6 +183,15 @@ inputs.forEach(input => {
             parent.classList.add('invalid');
             parent.classList.remove('valid');
         }
+        const checkboxes = document.querySelectorAll('input[name="creneaux[]"]');
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
+                if (checked.length > 2) {
+                    cb.checked = false;
+                    alert("Vous pouvez sélectionner 2 créneaux maximum");
+                }
     });
 });
 
@@ -210,6 +219,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

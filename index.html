@@ -225,6 +225,7 @@ form.addEventListener('submit', function(e){
 
     // --- Si tout est bon, on envoie le formulaire ---
     msg.className = ''; // efface message précédent
+    
     fetch(this.action, {
         method: 'POST',
         body: new FormData(this)
@@ -267,6 +268,7 @@ form.addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 

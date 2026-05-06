@@ -2,288 +2,598 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Préinscription ASD Gymnastique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-/* Fond bleu clair plein écran */
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #d0e6f7;  /* fond bleu clair */
-    font-family: Arial, sans-serif;
-}
+  :root {
+    --blue:       #1a73e8;
+    --blue-light: #e8f0fe;
+    --blue-mid:   #4a90d9;
+    --red:        #d93025;
+    --red-light:  #fce8e6;
+    --green:      #1e7e34;
+    --green-light:#e6f4ea;
+    --gray-50:    #f8f9fa;
+    --gray-100:   #f1f3f4;
+    --gray-200:   #e8eaed;
+    --gray-500:   #9aa0a6;
+    --gray-700:   #5f6368;
+    --gray-900:   #202124;
+    --radius:     10px;
+    --shadow:     0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  }
 
-/* Formulaire intégré sur le fond */
-form {
-    background: transparent;  /* pas de fond blanc */
-    padding: 0;
-    box-shadow: none;
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
-}
+  html, body {
+    min-height: 100%;
+    background: linear-gradient(145deg, #e8f0fe 0%, #d2e3fc 40%, #c5d9fa 100%);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--gray-900);
+  }
 
-/* Logo */
-form img {
-    width: 150px;
-    height: auto;
-    border-radius: 50%;
-    margin-bottom: 20px;
-}
+  /* Subtle geometric pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(26,115,232,.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(217,48,37,.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* Titre */
-h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
-
-/* Champs et icônes */
-.input-group {
+  .page {
     position: relative;
-    margin-bottom: 20px;
-}
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1rem 3rem;
+  }
 
-input {
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow), 0 0 0 1px rgba(26,115,232,.08);
     width: 100%;
-    box-sizing: border-box; /* inclut padding et border dans la largeur */
-    padding: 12px 40px 12px 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    background: #ffffffcc; /* semi-transparent pour lisibilité */
-    transition: 0.3s;
-}
+    max-width: 580px;
+    overflow: hidden;
+    animation: slideUp .45s cubic-bezier(.22,.61,.36,1) both;
+  }
 
-input:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52,152,219,0.5);
-    outline: none;
-}
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-/* Icônes ✓/✖ */
-.input-group .icon {
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a73e8 0%, #1558b0 100%);
+    padding: 2rem 2rem 1.75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
     position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 28px;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .header-inner { position: relative; z-index: 1; }
+
+  .logo-wrap {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.35);
+    overflow: hidden;
+    margin: 0 auto 1rem;
+    background: rgba(255,255,255,.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .logo-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .logo-fallback {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: #fff;
+    letter-spacing: -.5px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: .3rem;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: rgba(255,255,255,.75);
+    font-weight: 300;
+  }
+
+  /* ── Body ── */
+  .body { padding: 1.5rem 2rem 2rem; }
+
+  /* Section */
+  .section { margin-bottom: 1.5rem; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: .875rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* Grid */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+  /* Field */
+  .field { position: relative; margin-bottom: .875rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: 5px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    transition: border-color .18s, background .18s, box-shadow .18s;
+    outline: none;
+    appearance: none;
+  }
+
+  .field input:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(26,115,232,.12);
+  }
+
+  .field input::placeholder { color: var(--gray-500); font-size: 14px; }
+
+  /* State icons */
+  .field .ic {
+    position: absolute;
+    right: 11px;
+    bottom: 11px;
+    width: 16px; height: 16px;
     display: none;
-}
+    pointer-events: none;
+  }
 
-.input-group.valid .icon.valid { display: inline; color: green; }
-.input-group.invalid .icon.invalid { display: inline; color: red; }
+  .field.ok .ic.v { display: block; }
+  .field.ko .ic.e { display: block; }
+  .field.ok input { border-color: #34a853; background: #fff; }
+  .field.ko input { border-color: var(--red); background: #fff; }
 
-/* Bouton */
-button {
-    width: 100%;            /* même largeur que les champs */
-    box-sizing: border-box;  /* inclut padding et border */
-    padding: 14px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    color: white;
-    background: linear-gradient(45deg, #e74c3c, #3498db, #ffffff);
-    margin-top: 10px;
-    transition: 0.3s;
-}
+  .ic.v svg { stroke: #34a853; }
+  .ic.e svg { stroke: var(--red); }
 
-button:hover {
-    transform: scale(1.05);
-    background: linear-gradient(45deg, #3498db, #e74c3c, #ffffff);
-}
+  /* Date input */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: .5; cursor: pointer;
+  }
 
-/* Messages */
-.success, .error {
-    margin-top: 15px;
-    font-weight: bold;
+  /* ── Créneaux ── */
+  .creneaux-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .cb-slot {
+    position: relative;
+  }
+
+  .cb-slot input[type="checkbox"] {
+    position: absolute;
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-}
+    width: 0; height: 0;
+  }
 
-.success.show { color: green; opacity: 1; }
-.error.show { color: red; opacity: 1; }
+  .cb-slot label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    transition: all .15s;
+    user-select: none;
+  }
+
+  .cb-slot label:hover {
+    border-color: var(--blue-mid);
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+
+  .cb-slot input:checked + label {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  .cb-box {
+    width: 16px; height: 16px;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+
+  .cb-slot input:checked + label .cb-box {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+
+  .cb-slot input:checked + label .cb-box::after {
+    content: '';
+    display: block;
+    width: 9px; height: 5px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .creneau-hint {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+  }
+
+  /* ── Message ── */
+  .msg {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: none;
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .msg.err { display: flex; align-items: center; gap: 8px; background: var(--red-light); color: var(--red); }
+  .msg.ok  { display: flex; align-items: center; gap: 8px; background: var(--green-light); color: var(--green); }
+
+  /* ── Button ── */
+  .btn {
+    width: 100%;
+    padding: 13px 20px;
+    border: none;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #1a73e8 0%, #1558b0 100%);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity .15s, transform .1s, box-shadow .15s;
+    box-shadow: 0 2px 8px rgba(26,115,232,.3);
+  }
+
+  .btn:hover { opacity: .92; box-shadow: 0 4px 14px rgba(26,115,232,.38); }
+  .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* Spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn.loading .spinner { display: block; }
+  .btn.loading .btn-text { opacity: .7; }
+
+  /* ── Footer note ── */
+  .footnote {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--gray-500);
+    margin-top: 1.25rem;
+  }
 </style>
 </head>
 <body>
+<div class="page">
+  <div class="card">
 
-<form id="inscriptionForm" method="POST" action="https://asdgym.alwaysdata.net/insert.php">
-    <img src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASD Gymnastique" onerror="this.src='https://via.placeholder.com/150?text=Logo'">
-    <h2>Préinscription ASD Gymnastique loisirs</h2>
-
-    <div class="input-group">
-        <input type="text" name="nom" placeholder="Nom de l'enfant" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-inner">
+        <div class="logo-wrap">
+          <img id="logo-img" src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASD Gym">
+        </div>
+        <h1>Préinscription ASD<br>Gymnastique loisirs</h1>
+        <p>Saison 2025 – 2026</p>
+      </div>
     </div>
 
-    <div class="input-group">
-        <input type="text" name="prenom" placeholder="Prénom de l'enfant" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+    <!-- Form body -->
+    <div class="body">
 
-    <div class="input-group">
-        <input type="date" name="datenaissance" placeholder="Date de naissance de l'enfant" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+      <!-- Section enfant -->
+      <div class="section">
+        <div class="section-title">L'enfant</div>
+        <div class="row">
+          <div class="field" id="f-nom">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" placeholder="Dupont" autocomplete="family-name">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+          <div class="field" id="f-prenom">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom" placeholder="Léa" autocomplete="given-name">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+        </div>
+        <div class="field" id="f-ddn">
+          <label for="datenaissance">Date de naissance</label>
+          <input type="date" id="datenaissance" name="datenaissance">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+      </div>
 
-    <div class="input-group">
-        <input type="email" name="email" placeholder="Email" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+      <!-- Section parent -->
+      <div class="section">
+        <div class="section-title">Parent / Responsable</div>
+        <div class="field" id="f-email">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="parent@exemple.fr" autocomplete="email">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+        <div class="field" id="f-tel">
+          <label for="tel">Téléphone</label>
+          <input type="tel" id="tel" name="tel" placeholder="0612345678" maxlength="10" autocomplete="tel">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+        <div class="field" id="f-adresse">
+          <label for="adresse">Adresse</label>
+          <input type="text" id="adresse" name="adresse" placeholder="12 rue des Lilas" autocomplete="street-address">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+        <div class="row">
+          <div class="field" id="f-cp">
+            <label for="codepostal">Code postal</label>
+            <input type="text" id="codepostal" name="codepostal" placeholder="91600" maxlength="5" autocomplete="postal-code">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+          <div class="field" id="f-ville">
+            <label for="ville">Ville</label>
+            <input type="text" id="ville" name="ville" placeholder="Savigny-sur-Orge" autocomplete="address-level2">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+        </div>
+      </div>
 
-    <div class="input-group">
-        <input type="tel" name="tel" placeholder="Téléphone (10 chiffres)" pattern="[0-9]{10}" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+      <!-- Section créneaux -->
+      <div class="section">
+        <div class="section-title">Créneaux souhaités</div>
+        <p class="creneau-hint">Sélectionnez 1 ou 2 créneaux maximum.</p>
+        <div class="creneaux-grid">
 
-    <div class="input-group">
-        <input type="text" name="adresse" placeholder="Adresse" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+          <div class="cb-slot">
+            <input type="checkbox" id="c1" name="creneaux[]" value="Lundi 17h-18h">
+            <label for="c1"><span class="cb-box"></span> Lundi 17h–18h</label>
+          </div>
 
-    <div class="input-group">
-        <input type="text" name="codepostal" placeholder="Code postal (5 chiffres)" pattern="[0-9]{5}" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+          <div class="cb-slot">
+            <input type="checkbox" id="c2" name="creneaux[]" value="Mardi 17h-18h">
+            <label for="c2"><span class="cb-box"></span> Mardi 17h–18h</label>
+          </div>
 
-    <div class="input-group">
-        <input type="text" name="ville" placeholder="Ville" required>
-        <span class="icon valid">✓</span>
-        <span class="icon invalid">✖</span>
-    </div>
+          <div class="cb-slot">
+            <input type="checkbox" id="c3" name="creneaux[]" value="Mercredi 10h-11h">
+            <label for="c3"><span class="cb-box"></span> Mercredi 10h–11h</label>
+          </div>
 
-    <div class="input-group" style="text-align:left">
-        <strong>Créneaux souhaités (2 max)</strong><br><br>
-        <label><input type="checkbox" name="creneaux[]" value="Lundi 17h-18h"> Lundi 17h–18h</label><br>
-        <label><input type="checkbox" name="creneaux[]" value="Mardi 18h-19h"> Mardi 18h–19h</label><br>
-        <label><input type="checkbox" name="creneaux[]" value="Mercredi 14h-15h"> Mercredi 14h–15h</label><br>
-        <label><input type="checkbox" name="creneaux[]" value="Samedi 10h-11h"> Samedi 10h–11h</label>
-    </div>
-    
-    <div id="message" style="color:red; margin-bottom:10px;"></div>
+          <div class="cb-slot">
+            <input type="checkbox" id="c4" name="creneaux[]" value="Jeudi 17h-18h">
+            <label for="c4"><span class="cb-box"></span> Jeudi 17h–18h</label>
+          </div>
 
-    <button type="submit">S'inscrire</button>
-    <div id="message"></div>
-</form>
+          <div class="cb-slot">
+            <input type="checkbox" id="c5" name="creneaux[]" value="Vendredi 17h-18h">
+            <label for="c5"><span class="cb-box"></span> Vendredi 17h–18h</label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Message retour -->
+      <div class="msg" id="msg"></div>
+
+      <!-- Bouton -->
+      <button class="btn" id="btn" type="button">
+        <div class="spinner"></div>
+        <span class="btn-text">Envoyer la préinscription</span>
+      </button>
+
+      <p class="footnote">Vos données sont utilisées uniquement dans le cadre de la gestion des inscriptions.</p>
+
+    </div><!-- /.body -->
+  </div><!-- /.card -->
+</div><!-- /.page -->
 
 <script>
-// Icônes interactives ✓/✖
-const inputs = document.querySelectorAll('.input-group input:not([type="checkbox"])');
-inputs.forEach(input => {
-    input.addEventListener('input', () => {
-        const parent = input.parentElement;
-        if(input.checkValidity()){
-            parent.classList.add('valid');
-            parent.classList.remove('invalid');
-        } else {
-            parent.classList.add('invalid');
-            parent.classList.remove('valid');
-        }
-    });
+// --- Logo fallback ---
+document.getElementById('logo-img').onerror = function() {
+  var wrap = this.parentElement;
+  this.remove();
+  wrap.innerHTML = '<span class="logo-fallback">ASD</span>';
+};
+
+// --- Validators ---
+var validators = {
+  nom:          function(v) { return v.trim().length >= 2; },
+  prenom:       function(v) { return v.trim().length >= 2; },
+  datenaissance:function(v) { return v.length > 0; },
+  email:        function(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); },
+  tel:          function(v) { return /^[0-9]{10}$/.test(v); },
+  adresse:      function(v) { return v.trim().length >= 5; },
+  codepostal:   function(v) { return /^[0-9]{5}$/.test(v); },
+  ville:        function(v) { return v.trim().length >= 2; }
+};
+
+var fieldWrap = {
+  nom: 'f-nom', prenom: 'f-prenom', datenaissance: 'f-ddn',
+  email: 'f-email', tel: 'f-tel', adresse: 'f-adresse',
+  codepostal: 'f-cp', ville: 'f-ville'
+};
+
+function validateField(id) {
+  var input = document.getElementById(id);
+  var wrap  = document.getElementById(fieldWrap[id]);
+  if (!input || !wrap) return false;
+  var val   = input.value;
+  var valid = validators[id](val);
+  var touched = val.length > 0;
+  wrap.classList.toggle('ok', valid);
+  wrap.classList.toggle('ko', !valid && touched);
+  return valid;
+}
+
+// Attach live validation
+Object.keys(validators).forEach(function(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input',  function() { validateField(id); });
+  el.addEventListener('blur',   function() { validateField(id); });
 });
 
-// Limite à 2 créneaux max
-const cbs = document.querySelectorAll('input[name="creneaux[]"]');
-cbs.forEach(cb => {
-    cb.addEventListener('change', () => {
-        const checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
-        if (checked.length > 2) {
-            cb.checked = false;
-            alert("Vous pouvez sélectionner 2 créneaux maximum");
-        }
-    });
-});
-
-// Envoi formulaire avec contrôle créneaux
-const form = document.getElementById('inscriptionForm');
-const msg = document.getElementById('message');
-
-form.addEventListener('submit', function(e){
-    e.preventDefault(); // bloque l'envoi normal
-
-    // --- Vérification des créneaux ---
-    const checkedCreneaux = document.querySelectorAll('input[name="creneaux[]"]:checked');
-    if(checkedCreneaux.length === 0){
-        msg.className = 'error show';
-        msg.innerHTML = "❌ Veuillez sélectionner au moins un créneau.";
-        return; // stoppe l'envoi
+// --- Créneaux: max 2 ---
+var checkboxes = document.querySelectorAll('input[name="creneaux[]"]');
+checkboxes.forEach(function(cb) {
+  cb.addEventListener('change', function() {
+    var checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
+    if (checked.length > 2) {
+      this.checked = false;
     }
+  });
+});
 
-    // --- Si tout est bon, on envoie le formulaire ---
-    msg.className = ''; // efface message précédent
-    
-    fetch(this.action, {
-        method: 'POST',
-        body: new FormData(this)
+// --- Submit ---
+document.getElementById('btn').addEventListener('click', function() {
+  var msg = document.getElementById('msg');
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  // Validate all fields
+  var allValid = true;
+  Object.keys(validators).forEach(function(id) {
+    if (!validateField(id)) allValid = false;
+  });
+
+  // Validate créneaux
+  var creneaux = Array.from(document.querySelectorAll('input[name="creneaux[]"]:checked'))
+                      .map(function(c) { return c.value; });
+
+  if (creneaux.length === 0) {
+    msg.className = 'msg err';
+    msg.textContent = '⚠ Veuillez sélectionner au moins un créneau.';
+    return;
+  }
+
+  if (!allValid) {
+    msg.className = 'msg err';
+    msg.textContent = '⚠ Merci de corriger les champs en erreur avant d\'envoyer.';
+    return;
+  }
+
+  // Send
+  var btn = document.getElementById('btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.btn-text').textContent = 'Envoi en cours…';
+
+  var fd = new FormData();
+  ['nom','prenom','datenaissance','email','tel','adresse','codepostal','ville'].forEach(function(id) {
+    fd.append(id, document.getElementById(id).value.trim());
+  });
+  creneaux.forEach(function(c) { fd.append('creneaux[]', c); });
+
+  fetch('https://asdgym.alwaysdata.net/insert.php', { method: 'POST', body: fd })
+    .then(function(r) { return r.text(); })
+    .then(function(txt) {
+      msg.className = 'msg ok';
+      msg.textContent = txt;
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-text').textContent = 'Envoyer la préinscription';
     })
-    .then(response => response.text())
-    .then(data => {
-        msg.className = 'success show';
-        msg.innerHTML = data;
-
-        // ---- Vider les champs ----
-        form.reset();
-    
-        // ---- Optionnel : retirer les icônes de validation ----
-        inputs.forEach(input => {
-            const parent = input.parentElement;
-            parent.classList.remove('valid');
-            parent.classList.remove('invalid');
-        });
-    
-        // Optionnel : vider le formulaire
-        form.reset();
-        inputs.forEach(input => {
-            const parent = input.parentElement;
-            parent.classList.remove('valid', 'invalid');
-        })
-
-        // Puis rediriger après 1-2 secondes
-        setTimeout(() => {
-            window.location.href = "validationpreinscri.html";
-        }, 1000); // 1 seconde d'attente
-
-
-    })
-    .catch(err => {
-        console.error(err);
-        msg.className = 'error show';
-        msg.innerHTML = "❌ Oops… une erreur est survenue";
+    .catch(function() {
+      msg.className = 'msg err';
+      msg.textContent = '⚠ Une erreur est survenue, veuillez réessayer.';
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-text').textContent = 'Envoyer la préinscription';
     });
 });
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

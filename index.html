@@ -442,6 +442,56 @@
     flex-shrink: 0;
     margin-top: 1px;
   }
+
+  /* ── Page fermée ── */
+  .closed-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 2rem 3rem;
+    animation: slideUp .5s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .closed-screen.show { display: flex; }
+  .closed-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--coral-lt, #fff0f0);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    margin-bottom: 1.5rem;
+    border: 2px solid rgba(255,107,107,.2);
+  }
+  .closed-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400;
+    color: var(--gray-900, #202124);
+    margin-bottom: .75rem;
+  }
+  .closed-screen p {
+    font-size: 15px;
+    color: var(--gray-700, #5f6368);
+    line-height: 1.65;
+    max-width: 380px;
+  }
+  /* Loader discret */
+  .page-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--gray-500, #9aa0a6);
+    font-size: 14px;
+    gap: 10px;
+  }
+  .page-loader .spin {
+    width: 18px; height: 18px;
+    border: 2px solid var(--gray-200, #e8eaed);
+    border-top-color: var(--blue, #1a73e8);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -504,20 +554,20 @@
         </div>
         <div class="field" id="f-adresse">
           <label for="adresse">Adresse</label>
-          <input type="text" id="adresse" name="adresse" placeholder="Rue de la Haute Borne" autocomplete="street-address">
+          <input type="text" id="adresse" name="adresse" placeholder="12 rue des Lilas" autocomplete="street-address">
           <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
           <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
         </div>
         <div class="row">
           <div class="field" id="f-cp">
             <label for="codepostal">Code postal</label>
-            <input type="text" id="codepostal" name="codepostal" placeholder="93700" maxlength="5" autocomplete="postal-code">
+            <input type="text" id="codepostal" name="codepostal" placeholder="91600" maxlength="5" autocomplete="postal-code">
             <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
             <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
           </div>
           <div class="field" id="f-ville">
             <label for="ville">Ville</label>
-            <input type="text" id="ville" name="ville" placeholder="Drancy" autocomplete="address-level2">
+            <input type="text" id="ville" name="ville" placeholder="Savigny-sur-Orge" autocomplete="address-level2">
             <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
             <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
           </div>
@@ -577,7 +627,7 @@
         <svg viewBox="0 0 36 36"><polyline points="6 18 14 26 30 10"/></svg>
       </div>
       <h2>Merci pour votre préinscription&nbsp;!</h2>
-      <p class="sub">Votre demande a bien été enregistrée.</p>
+      <p class="sub">Votre demande a bien été enregistrée.<br>Nous vous contacterons prochainement pour confirmer votre inscription.</p>
       <div class="recap-box">
         <div class="recap-title">Récapitulatif</div>
         <div class="recap-row"><span class="rk">Enfant</span>    <span class="rv" id="s-enfant"></span></div>
@@ -598,6 +648,35 @@
   </div><!-- /.card -->
 </div><!-- /.page -->
 
+<script>
+// ── Vérification ouverture inscriptions ───────────────────
+(function() {
+  var loader  = document.getElementById('page-loader');
+  var closed  = document.getElementById('closed-screen');
+  var body    = document.querySelector('.body');
+  var success = document.getElementById('success-screen');
+
+  // Masquer le formulaire le temps de vérifier
+  if (body) body.style.display = 'none';
+
+  fetch('https://asdgym.alwaysdata.net/status.php')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      loader.style.display = 'none';
+      if (data.ouvert) {
+        if (body) body.style.display = '';
+      } else {
+        if (data.message) document.getElementById('closed-message').textContent = data.message;
+        closed.classList.add('show');
+      }
+    })
+    .catch(function() {
+      // Si l'API est inaccessible, on affiche le formulaire par défaut
+      loader.style.display = 'none';
+      if (body) body.style.display = '';
+    });
+})();
+</script>
 <script>
 // --- Logo fallback ---
 document.getElementById('logo-img').onerror = function() {

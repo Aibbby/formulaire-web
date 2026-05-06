@@ -443,6 +443,110 @@
     margin-top: 1px;
   }
 
+  .btn.loading .spinner { display: block; }
+  .btn.loading .btn-text { opacity: .7; }
+
+  /* ── Footer note ── */
+  .footnote {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--gray-500);
+    margin-top: 1.25rem;
+  }
+
+  /* ── Écran de succès ── */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 2rem 2.5rem;
+    animation: slideUp .5s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .success-screen.show { display: flex; }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  .success-icon svg {
+    width: 36px; height: 36px;
+    stroke: var(--green);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    animation: drawCheck .5s .2s ease both;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+  }
+  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+  .success-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gray-900);
+    margin-bottom: .5rem;
+  }
+  .success-screen .sub {
+    font-size: 15px;
+    color: var(--gray-700);
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .recap-box {
+    width: 100%;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+  .recap-box .recap-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: .75rem;
+  }
+  .recap-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--gray-200);
+    gap: 12px;
+  }
+  .recap-row:last-child { border-bottom: none; }
+  .recap-row .rk { color: var(--gray-500); flex-shrink: 0; }
+  .recap-row .rv { color: var(--gray-900); font-weight: 500; text-align: right; }
+  .email-note {
+    font-size: 13px;
+    color: var(--gray-700);
+    background: var(--blue-light);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+    line-height: 1.5;
+  }
+  .email-note svg {
+    width: 16px; height: 16px;
+    stroke: var(--blue);
+    stroke-width: 2;
+    fill: none;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
   /* ── Page fermée ── */
   .closed-screen {
     display: none;
@@ -492,6 +596,17 @@
     animation: spin .7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Page fermée ── */
+  .closed-screen { display:none; flex-direction:column; align-items:center; text-align:center; padding:2.5rem 2rem 3rem; }
+  .closed-screen.show { display:flex; }
+  .closed-icon { font-size:52px; margin-bottom:1.25rem; }
+  .closed-screen h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; color:var(--gray-900); margin-bottom:.75rem; }
+  .closed-screen p { font-size:15px; color:var(--gray-700); line-height:1.65; max-width:380px; }
+  .page-loader { display:none; align-items:center; justify-content:center; padding:3rem; color:var(--gray-500); font-size:14px; gap:10px; }
+  .page-loader.show { display:flex; }
+  .spin { width:18px; height:18px; border:2px solid var(--gray-200); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -507,6 +622,18 @@
         <h1>Préinscription ASD<br>Gymnastique loisirs</h1>
         <p>Saison 2025 – 2026</p>
       </div>
+    </div>
+
+    <!-- Loader -->
+    <div class="page-loader" id="page-loader">
+      <div class="spin"></div>&nbsp;Vérification en cours…
+    </div>
+
+    <!-- Fermé -->
+    <div class="closed-screen" id="closed-screen">
+      <div class="closed-icon">🔒</div>
+      <h2>Préinscriptions fermées</h2>
+      <p id="closed-message">Les préinscriptions sont actuellement fermées. Revenez bientôt !</p>
     </div>
 
     <!-- Form body -->
@@ -649,35 +776,35 @@
 </div><!-- /.page -->
 
 <script>
-// ── Vérification ouverture inscriptions ───────────────────
+// ── Vérification ouverture inscriptions ─────────────────
 (function() {
-  var loader  = document.getElementById('page-loader');
-  var closed  = document.getElementById('closed-screen');
-  var body    = document.querySelector('.body');
-  var success = document.getElementById('success-screen');
+  var loader = document.getElementById('page-loader');
+  var closed = document.getElementById('closed-screen');
+  var body   = document.querySelector('.body');
 
-  // Masquer le formulaire le temps de vérifier
-  if (body) body.style.display = 'none';
+  function showForm()   { if(body) body.style.display=''; if(loader) loader.classList.remove('show'); }
+  function showLoader() { if(body) body.style.display='none'; if(loader) loader.classList.add('show'); }
+  function showClosed(msg) {
+    if(loader) loader.classList.remove('show');
+    if(body)   body.style.display='none';
+    var el = document.getElementById('closed-message');
+    if(el && msg) el.textContent = msg;
+    if(closed) closed.classList.add('show');
+  }
 
-  fetch('https://asdgym.alwaysdata.net/status.php')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      loader.style.display = 'none';
-      if (data.ouvert) {
-        if (body) body.style.display = '';
-      } else {
-        if (data.message) document.getElementById('closed-message').textContent = data.message;
-        closed.classList.add('show');
-      }
+  showLoader();
+
+  fetch('https://asdgym.alwaysdata.net/status.php', {cache:'no-cache'})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data.ouvert){ showForm(); }
+      else { showClosed(data.message); }
     })
-    .catch(function() {
-      // Si l'API est inaccessible, on affiche le formulaire par défaut
-      loader.style.display = 'none';
-      if (body) body.style.display = '';
+    .catch(function(){
+      showForm(); // En cas d'erreur réseau, on affiche le formulaire
     });
 })();
-</script>
-<script>
+
 // --- Logo fallback ---
 document.getElementById('logo-img').onerror = function() {
   var wrap = this.parentElement;

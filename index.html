@@ -349,6 +349,99 @@
     color: var(--gray-500);
     margin-top: 1.25rem;
   }
+
+  /* ── Écran de succès ── */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 2rem 2.5rem;
+    animation: slideUp .5s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .success-screen.show { display: flex; }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  .success-icon svg {
+    width: 36px; height: 36px;
+    stroke: var(--green);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    animation: drawCheck .5s .2s ease both;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+  }
+  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+  .success-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gray-900);
+    margin-bottom: .5rem;
+  }
+  .success-screen .sub {
+    font-size: 15px;
+    color: var(--gray-700);
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .recap-box {
+    width: 100%;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+  .recap-box .recap-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: .75rem;
+  }
+  .recap-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--gray-200);
+    gap: 12px;
+  }
+  .recap-row:last-child { border-bottom: none; }
+  .recap-row .rk { color: var(--gray-500); flex-shrink: 0; }
+  .recap-row .rv { color: var(--gray-900); font-weight: 500; text-align: right; }
+  .email-note {
+    font-size: 13px;
+    color: var(--gray-700);
+    background: var(--blue-light);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+    line-height: 1.5;
+  }
+  .email-note svg {
+    width: 16px; height: 16px;
+    stroke: var(--blue);
+    stroke-width: 2;
+    fill: none;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
 </style>
 </head>
 <body>
@@ -411,20 +504,20 @@
         </div>
         <div class="field" id="f-adresse">
           <label for="adresse">Adresse</label>
-          <input type="text" id="adresse" name="adresse" placeholder="Rue de la Haute Borne" autocomplete="street-address">
+          <input type="text" id="adresse" name="adresse" placeholder="12 rue des Lilas" autocomplete="street-address">
           <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
           <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
         </div>
         <div class="row">
           <div class="field" id="f-cp">
             <label for="codepostal">Code postal</label>
-            <input type="text" id="codepostal" name="codepostal" placeholder="93700" maxlength="5" autocomplete="postal-code">
+            <input type="text" id="codepostal" name="codepostal" placeholder="91600" maxlength="5" autocomplete="postal-code">
             <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
             <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
           </div>
           <div class="field" id="f-ville">
             <label for="ville">Ville</label>
-            <input type="text" id="ville" name="ville" placeholder="Drancy" autocomplete="address-level2">
+            <input type="text" id="ville" name="ville" placeholder="Savigny-sur-Orge" autocomplete="address-level2">
             <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
             <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
           </div>
@@ -477,6 +570,31 @@
       <p class="footnote">Vos données sont utilisées uniquement dans le cadre de la gestion des inscriptions.</p>
 
     </div><!-- /.body -->
+
+    <!-- Écran de succès -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">
+        <svg viewBox="0 0 36 36"><polyline points="6 18 14 26 30 10"/></svg>
+      </div>
+      <h2>Merci pour votre préinscription&nbsp;!</h2>
+      <p class="sub">Votre demande a bien été enregistrée.<br>Nous vous contacterons prochainement pour confirmer votre inscription.</p>
+      <div class="recap-box">
+        <div class="recap-title">Récapitulatif</div>
+        <div class="recap-row"><span class="rk">Enfant</span>    <span class="rv" id="s-enfant"></span></div>
+        <div class="recap-row"><span class="rk">Naissance</span> <span class="rv" id="s-ddn"></span></div>
+        <div class="recap-row"><span class="rk">Email</span>     <span class="rv" id="s-email"></span></div>
+        <div class="recap-row"><span class="rk">Téléphone</span> <span class="rv" id="s-tel"></span></div>
+        <div class="recap-row"><span class="rk">Adresse</span>   <span class="rv" id="s-adresse"></span></div>
+        <div class="recap-row"><span class="rk">Créneaux</span>  <span class="rv" id="s-creneaux"></span></div>
+      </div>
+      <div class="email-note">
+        <svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;stroke:var(--blue);flex-shrink:0;margin-top:1px">
+          <rect x="1" y="3" width="14" height="10" rx="2"/><polyline points="1 5 8 10 15 5"/>
+        </svg>
+        Un email de confirmation vient d'être envoyé à l'adresse indiquée. Pensez à vérifier vos spams si vous ne le recevez pas dans les prochaines minutes.
+      </div>
+    </div>
+
   </div><!-- /.card -->
 </div><!-- /.page -->
 
@@ -577,14 +695,32 @@ document.getElementById('btn').addEventListener('click', function() {
   });
   creneaux.forEach(function(c) { fd.append('creneaux[]', c); });
 
+  // Snapshot pour le récap affiché côté client
+  var snapNom     = document.getElementById('nom').value.trim();
+  var snapPrenom  = document.getElementById('prenom').value.trim();
+  var snapDdn     = document.getElementById('datenaissance').value;
+  var snapEmail   = document.getElementById('email').value.trim();
+  var snapTel     = document.getElementById('tel').value.trim();
+  var snapAdresse = document.getElementById('adresse').value.trim();
+  var snapCp      = document.getElementById('codepostal').value.trim();
+  var snapVille   = document.getElementById('ville').value.trim();
+
   fetch('https://asdgym.alwaysdata.net/insert.php', { method: 'POST', body: fd })
     .then(function(r) { return r.text(); })
-    .then(function(txt) {
-      msg.className = 'msg ok';
-      msg.textContent = txt;
-      btn.disabled = false;
-      btn.classList.remove('loading');
-      btn.querySelector('.btn-text').textContent = 'Envoyer la préinscription';
+    .then(function() {
+      // Remplir le récap affiché
+      document.getElementById('s-enfant').textContent   = snapPrenom + ' ' + snapNom;
+      var ddnParts = snapDdn.split('-');
+      document.getElementById('s-ddn').textContent      = ddnParts.length === 3 ? ddnParts[2] + '/' + ddnParts[1] + '/' + ddnParts[0] : snapDdn;
+      document.getElementById('s-email').textContent    = snapEmail;
+      document.getElementById('s-tel').textContent      = snapTel;
+      document.getElementById('s-adresse').textContent  = snapAdresse + ', ' + snapCp + ' ' + snapVille;
+      document.getElementById('s-creneaux').textContent = creneaux.join(' · ');
+
+      // Masquer le formulaire et afficher l'écran de succès
+      document.querySelector('.body').style.display = 'none';
+      document.getElementById('success-screen').classList.add('show');
+      document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     })
     .catch(function() {
       msg.className = 'msg err';

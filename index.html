@@ -350,98 +350,6 @@
     margin-top: 1.25rem;
   }
 
-  /* ── Écran de succès ── */
-  .success-screen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 2.5rem 2rem 2.5rem;
-    animation: slideUp .5s cubic-bezier(.22,.61,.36,1) both;
-  }
-  .success-screen.show { display: flex; }
-
-  .success-icon {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: var(--green-light);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-  .success-icon svg {
-    width: 36px; height: 36px;
-    stroke: var(--green);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    fill: none;
-    animation: drawCheck .5s .2s ease both;
-    stroke-dasharray: 50;
-    stroke-dashoffset: 50;
-  }
-  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
-
-  .success-screen h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--gray-900);
-    margin-bottom: .5rem;
-  }
-  .success-screen .sub {
-    font-size: 15px;
-    color: var(--gray-700);
-    line-height: 1.6;
-    margin-bottom: 1.75rem;
-  }
-  .recap-box {
-    width: 100%;
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    text-align: left;
-    margin-bottom: 1.5rem;
-  }
-  .recap-box .recap-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    color: var(--blue);
-    margin-bottom: .75rem;
-  }
-  .recap-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13.5px;
-    padding: 4px 0;
-    border-bottom: 1px solid var(--gray-200);
-    gap: 12px;
-  }
-  .recap-row:last-child { border-bottom: none; }
-  .recap-row .rk { color: var(--gray-500); flex-shrink: 0; }
-  .recap-row .rv { color: var(--gray-900); font-weight: 500; text-align: right; }
-  .email-note {
-    font-size: 13px;
-    color: var(--gray-700);
-    background: var(--blue-light);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    text-align: left;
-    line-height: 1.5;
-  }
-  .email-note svg {
-    width: 16px; height: 16px;
-    stroke: var(--blue);
-    stroke-width: 2;
-    fill: none;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
 
   .btn.loading .spinner { display: block; }
   .btn.loading .btn-text { opacity: .7; }
@@ -454,98 +362,6 @@
     margin-top: 1.25rem;
   }
 
-  /* ── Écran de succès ── */
-  .success-screen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 2.5rem 2rem 2.5rem;
-    animation: slideUp .5s cubic-bezier(.22,.61,.36,1) both;
-  }
-  .success-screen.show { display: flex; }
-
-  .success-icon {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: var(--green-light);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-  .success-icon svg {
-    width: 36px; height: 36px;
-    stroke: var(--green);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    fill: none;
-    animation: drawCheck .5s .2s ease both;
-    stroke-dasharray: 50;
-    stroke-dashoffset: 50;
-  }
-  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
-
-  .success-screen h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    font-weight: 400;
-    color: var(--gray-900);
-    margin-bottom: .5rem;
-  }
-  .success-screen .sub {
-    font-size: 15px;
-    color: var(--gray-700);
-    line-height: 1.6;
-    margin-bottom: 1.75rem;
-  }
-  .recap-box {
-    width: 100%;
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    text-align: left;
-    margin-bottom: 1.5rem;
-  }
-  .recap-box .recap-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    color: var(--blue);
-    margin-bottom: .75rem;
-  }
-  .recap-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13.5px;
-    padding: 4px 0;
-    border-bottom: 1px solid var(--gray-200);
-    gap: 12px;
-  }
-  .recap-row:last-child { border-bottom: none; }
-  .recap-row .rk { color: var(--gray-500); flex-shrink: 0; }
-  .recap-row .rv { color: var(--gray-900); font-weight: 500; text-align: right; }
-  .email-note {
-    font-size: 13px;
-    color: var(--gray-700);
-    background: var(--blue-light);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    text-align: left;
-    line-height: 1.5;
-  }
-  .email-note svg {
-    width: 16px; height: 16px;
-    stroke: var(--blue);
-    stroke-width: 2;
-    fill: none;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
 
   /* ── Page fermée ── */
   .closed-screen {
@@ -607,6 +423,215 @@
   .page-loader.show { display:flex; }
   .spin { width:18px; height:18px; border:2px solid var(--gray-200); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ══════════════════════════════════════
+     ÉCRAN DE CONFIRMATION — SPORTIF
+  ══════════════════════════════════════ */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    animation: successIn .6s cubic-bezier(.22,.61,.36,1) both;
+    width: 100%;
+  }
+  .success-screen.show { display: flex; }
+
+  @keyframes successIn {
+    from { opacity:0; transform:translateY(30px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Bandeau hero */
+  .success-hero {
+    width: 100%;
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    padding: 2.5rem 2rem 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .success-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+  }
+  .success-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+  }
+  .success-medal {
+    position: relative; z-index: 1;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    border: 3px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 36px;
+    animation: medalPop .5s .3s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes medalPop {
+    from { transform: scale(0) rotate(-20deg); opacity:0; }
+    to   { transform: scale(1) rotate(0); opacity:1; }
+  }
+  .success-hero h2 {
+    position: relative; z-index: 1;
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; font-weight: 400;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: .5rem;
+    animation: fadeUp .5s .4s ease both;
+  }
+  .success-hero p {
+    position: relative; z-index: 1;
+    font-size: 14px;
+    color: rgba(255,255,255,.78);
+    animation: fadeUp .5s .5s ease both;
+  }
+
+  /* Contenu */
+  .success-content {
+    width: 100%;
+    padding: 0 2rem 2rem;
+    margin-top: -1.5rem;
+    position: relative; z-index: 2;
+  }
+
+  /* Carte récap */
+  .recap-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.10);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    animation: fadeUp .5s .55s ease both;
+  }
+  .recap-card-header {
+    background: linear-gradient(90deg, #f0f7ff, #e8f0fe);
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #e2ecff;
+  }
+  .recap-card-header span {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: #1a73e8;
+  }
+  .recap-rows { padding: 4px 0; }
+  .recap-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 18px;
+    border-bottom: 1px solid #f5f7ff;
+    gap: 12px;
+  }
+  .recap-row:last-child { border-bottom: none; }
+  .rk {
+    font-size: 12px; font-weight: 600;
+    color: #9aa0a6;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+  .rv {
+    font-size: 13.5px; font-weight: 600;
+    color: #202124;
+    text-align: right;
+  }
+
+  /* Badges créneaux */
+  .creneaux-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .creneau-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #e8f0fe; color: #1a73e8;
+    border: 1px solid #c5d9fa;
+    border-radius: 20px;
+    font-size: 11.5px; font-weight: 700;
+    padding: 4px 10px;
+  }
+
+  /* Carte email */
+  .email-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    padding: 16px 18px;
+    display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 1rem;
+    animation: fadeUp .5s .65s ease both;
+  }
+  .email-icon-wrap {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: #e8f0fe;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .email-icon-wrap svg { width: 20px; height: 20px; stroke: #1a73e8; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .email-card-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #202124; margin-bottom: 3px; }
+  .email-card-text span { font-size: 12.5px; color: #7a8ab0; line-height: 1.5; }
+
+  /* Carte contact */
+  .contact-card {
+    background: linear-gradient(135deg, #1a73e8 0%, #1558b0 100%);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeUp .5s .75s ease both;
+  }
+  .contact-icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .contact-card-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .contact-card-text a { font-size: 13px; color: rgba(255,255,255,.85); text-decoration: none; }
+  .contact-card-text a:hover { color: #fff; }
+
+  /* Étapes */
+  .steps {
+    width: 100%;
+    padding: 0 2rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp .5s .7s ease both;
+  }
+  .steps-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: #9aa0a6;
+    margin-bottom: 12px;
+  }
+  .step {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 12px;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a73e8, #4a90d9);
+    color: #fff;
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #202124; }
+  .step-text span { font-size: 12px; color: #7a8ab0; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
 </style>
 </head>
 <body>
@@ -681,20 +706,20 @@
         </div>
         <div class="field" id="f-adresse">
           <label for="adresse">Adresse</label>
-          <input type="text" id="adresse" name="adresse" placeholder="12 rue des Lilas" autocomplete="street-address">
+          <input type="text" id="adresse" name="adresse" placeholder="Rue De La Haute Borne" autocomplete="street-address">
           <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
           <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
         </div>
         <div class="row">
           <div class="field" id="f-cp">
             <label for="codepostal">Code postal</label>
-            <input type="text" id="codepostal" name="codepostal" placeholder="91600" maxlength="5" autocomplete="postal-code">
+            <input type="text" id="codepostal" name="codepostal" placeholder="93700" maxlength="5" autocomplete="postal-code">
             <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
             <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
           </div>
           <div class="field" id="f-ville">
             <label for="ville">Ville</label>
-            <input type="text" id="ville" name="ville" placeholder="Savigny-sur-Orge" autocomplete="address-level2">
+            <input type="text" id="ville" name="ville" placeholder="Drancy" autocomplete="address-level2">
             <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
             <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
           </div>
@@ -703,8 +728,8 @@
 
       <!-- Section créneaux -->
       <div class="section">
-        <div class="section-title">Créneaux souhaités</div>
-        <p class="creneau-hint">Sélectionnez 1 ou 2 créneaux maximum.</p>
+        <div class="section-title">Créneau souhaité</div>
+        <p class="creneau-hint">Sélectionnez 1 créneau.</p>
         <div class="creneaux-grid">
 
           <div class="cb-slot">
@@ -750,26 +775,55 @@
 
     <!-- Écran de succès -->
     <div class="success-screen" id="success-screen">
-      <div class="success-icon">
-        <svg viewBox="0 0 36 36"><polyline points="6 18 14 26 30 10"/></svg>
+
+      <!-- Hero -->
+      <div class="success-hero">
+        <div class="success-medal">🏅</div>
+        <h2>Félicitations&nbsp;!<br>Préinscription enregistrée</h2>
+        <p>Bienvenue à l'ASD Gymnastique loisirs</p>
       </div>
-      <h2>Merci pour votre préinscription&nbsp;!</h2>
-      <p class="sub">Votre demande a bien été enregistrée.<br>Nous vous contacterons prochainement pour confirmer votre inscription.</p>
-      <div class="recap-box">
-        <div class="recap-title">Récapitulatif</div>
-        <div class="recap-row"><span class="rk">Enfant</span>    <span class="rv" id="s-enfant"></span></div>
-        <div class="recap-row"><span class="rk">Naissance</span> <span class="rv" id="s-ddn"></span></div>
-        <div class="recap-row"><span class="rk">Email</span>     <span class="rv" id="s-email"></span></div>
-        <div class="recap-row"><span class="rk">Téléphone</span> <span class="rv" id="s-tel"></span></div>
-        <div class="recap-row"><span class="rk">Adresse</span>   <span class="rv" id="s-adresse"></span></div>
-        <div class="recap-row"><span class="rk">Créneaux</span>  <span class="rv" id="s-creneaux"></span></div>
+
+      <!-- Récapitulatif -->
+      <div class="success-content">
+        <div class="recap-card">
+          <div class="recap-card-header">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#1a73e8" stroke-width="2" stroke-linecap="round"><rect x="1" y="1" width="12" height="12" rx="2"/><line x1="4" y1="4" x2="10" y2="4"/><line x1="4" y1="7" x2="10" y2="7"/><line x1="4" y1="10" x2="7" y2="10"/></svg>
+            <span>Récapitulatif de la préinscription</span>
+          </div>
+          <div class="recap-rows">
+            <div class="recap-row"><span class="rk">Enfant</span>    <span class="rv" id="s-enfant"></span></div>
+            <div class="recap-row"><span class="rk">Naissance</span> <span class="rv" id="s-ddn"></span></div>
+            <div class="recap-row"><span class="rk">Email</span>     <span class="rv" id="s-email"></span></div>
+            <div class="recap-row"><span class="rk">Téléphone</span> <span class="rv" id="s-tel"></span></div>
+            <div class="recap-row"><span class="rk">Adresse</span>   <span class="rv" id="s-adresse"></span></div>
+            <div class="recap-row">
+              <span class="rk">Créneaux</span>
+              <div class="creneaux-badges" id="s-creneaux"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="email-card">
+          <div class="email-icon-wrap">
+            <svg viewBox="0 0 20 20"><rect x="1" y="4" width="18" height="13" rx="2"/><polyline points="1 6 10 12 19 6"/></svg>
+          </div>
+          <div class="email-card-text">
+            <strong>Email de confirmation envoyé ✓</strong>
+            <span>Un récapitulatif a été envoyé à l'adresse indiquée.<br>Pensez à vérifier vos spams si vous ne le recevez pas.</span>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="contact-card">
+          <div class="contact-icon-wrap">📞</div>
+          <div class="contact-card-text">
+            <strong>Une question ? Contactez-nous</strong>
+            <a href="mailto:asd@valoa.fr">asd@valoa.fr</a>
+          </div>
+        </div>
       </div>
-      <div class="email-note">
-        <svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;stroke:var(--blue);flex-shrink:0;margin-top:1px">
-          <rect x="1" y="3" width="14" height="10" rx="2"/><polyline points="1 5 8 10 15 5"/>
-        </svg>
-        Un email de confirmation vient d'être envoyé à l'adresse indiquée. Pensez à vérifier vos spams si vous ne le recevez pas dans les prochaines minutes.
-      </div>
+
     </div>
 
   </div><!-- /.card -->
@@ -850,12 +904,12 @@ Object.keys(validators).forEach(function(id) {
   el.addEventListener('blur',   function() { validateField(id); });
 });
 
-// --- Créneaux: max 2 ---
+// --- Créneaux: max 1 ---
 var checkboxes = document.querySelectorAll('input[name="creneaux[]"]');
 checkboxes.forEach(function(cb) {
   cb.addEventListener('change', function() {
     var checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
-    if (checked.length > 2) {
+    if (checked.length > 1) {
       this.checked = false;
     }
   });
@@ -921,7 +975,10 @@ document.getElementById('btn').addEventListener('click', function() {
       document.getElementById('s-email').textContent    = snapEmail;
       document.getElementById('s-tel').textContent      = snapTel;
       document.getElementById('s-adresse').textContent  = snapAdresse + ', ' + snapCp + ' ' + snapVille;
-      document.getElementById('s-creneaux').textContent = creneaux.join(' · ');
+      var crBadges = creneaux.map(function(c) {
+        return '<span class="creneau-badge">🗓 ' + c + '</span>';
+      }).join('');
+      document.getElementById('s-creneaux').innerHTML = '<div class="creneaux-badges">' + crBadges + '</div>';
 
       // Masquer le formulaire et afficher l'écran de succès
       document.querySelector('.body').style.display = 'none';

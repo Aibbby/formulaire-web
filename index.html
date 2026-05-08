@@ -645,6 +645,7 @@
           <img id="logo-img" src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASD Gym">
         </div>
         <h1>Préinscription ASD<br>Gymnastique loisirs</h1>
+        <p id="saison-label">Saison 2025 – 2026</p>
       </div>
     </div>
 
@@ -850,6 +851,11 @@
   fetch('https://asdgym.alwaysdata.net/status.php', {cache:'no-cache'})
     .then(function(r){ return r.json(); })
     .then(function(data){
+      // Mettre à jour la saison si fournie
+      if(data.saison) {
+        var el = document.getElementById('saison-label');
+        if(el) el.textContent = 'Saison ' + data.saison;
+      }
       if(data.ouvert){ showForm(); }
       else { showClosed(data.message); }
     })

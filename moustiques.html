@@ -946,6 +946,7 @@ document.getElementById('btn').addEventListener('click', function() {
   btn.querySelector('.btn-text').textContent = 'Envoi en cours…';
 
   var fd = new FormData();
+  fd.append('categorie', 'moustiques');
   ['nom','prenom','datenaissance','email','tel','adresse','codepostal','ville'].forEach(function(id) {
     fd.append(id, document.getElementById(id).value.trim());
   });

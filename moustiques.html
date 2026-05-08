@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Préinscription Moustiques – ASD Gym</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:       #1a73e8;
+    --blue-light: #e8f0fe;
+    --blue-mid:   #4a90d9;
+    --red:        #d93025;
+    --red-light:  #fce8e6;
+    --green:      #1e7e34;
+    --green-light:#e6f4ea;
+    --gray-50:    #f8f9fa;
+    --gray-100:   #f1f3f4;
+    --gray-200:   #e8eaed;
+    --gray-500:   #9aa0a6;
+    --gray-700:   #5f6368;
+    --gray-900:   #202124;
+    --radius:     10px;
+    --shadow:     0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  }
+
+  html, body {
+    min-height: 100%;
+    background: linear-gradient(145deg, #e8f0fe 0%, #d2e3fc 40%, #c5d9fa 100%);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--gray-900);
+  }
+
+  /* Subtle geometric pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(26,115,232,.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(217,48,37,.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1rem 3rem;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: var(--shadow), 0 0 0 1px rgba(26,115,232,.08);
+    width: 100%;
+    max-width: 580px;
+    overflow: hidden;
+    animation: slideUp .45s cubic-bezier(.22,.61,.36,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a73e8 0%, #1558b0 100%);
+    padding: 2rem 2rem 1.75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 28px;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .header-inner { position: relative; z-index: 1; }
+
+  .logo-wrap {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,.35);
+    overflow: hidden;
+    margin: 0 auto 1rem;
+    background: rgba(255,255,255,.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .logo-wrap img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .logo-fallback {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: #fff;
+    letter-spacing: -.5px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: .3rem;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: rgba(255,255,255,.75);
+    font-weight: 300;
+  }
+
+  /* ── Body ── */
+  .body { padding: 1.5rem 2rem 2rem; }
+
+  /* Section */
+  .section { margin-bottom: 1.5rem; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: .875rem;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  /* Grid */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+  /* Field */
+  .field { position: relative; margin-bottom: .875rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: 5px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    transition: border-color .18s, background .18s, box-shadow .18s;
+    outline: none;
+    appearance: none;
+  }
+
+  .field input:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(26,115,232,.12);
+  }
+
+  .field input::placeholder { color: var(--gray-500); font-size: 14px; }
+
+  /* State icons */
+  .field .ic {
+    position: absolute;
+    right: 11px;
+    bottom: 11px;
+    width: 16px; height: 16px;
+    display: none;
+    pointer-events: none;
+  }
+
+  .field.ok .ic.v { display: block; }
+  .field.ko .ic.e { display: block; }
+  .field.ok input { border-color: #34a853; background: #fff; }
+  .field.ko input { border-color: var(--red); background: #fff; }
+
+  .ic.v svg { stroke: #34a853; }
+  .ic.e svg { stroke: var(--red); }
+
+  /* Date input */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: .5; cursor: pointer;
+  }
+
+  /* ── Créneaux ── */
+  .creneaux-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .cb-slot {
+    position: relative;
+  }
+
+  .cb-slot input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  .cb-slot label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    transition: all .15s;
+    user-select: none;
+  }
+
+  .cb-slot label:hover {
+    border-color: var(--blue-mid);
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+
+  .cb-slot input:checked + label {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  .cb-box {
+    width: 16px; height: 16px;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+
+  .cb-slot input:checked + label .cb-box {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+
+  .cb-slot input:checked + label .cb-box::after {
+    content: '';
+    display: block;
+    width: 9px; height: 5px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .creneau-hint {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-bottom: 10px;
+  }
+
+  /* ── Message ── */
+  .msg {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    display: none;
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .msg.err { display: flex; align-items: center; gap: 8px; background: var(--red-light); color: var(--red); }
+  .msg.ok  { display: flex; align-items: center; gap: 8px; background: var(--green-light); color: var(--green); }
+
+  /* ── Button ── */
+  .btn {
+    width: 100%;
+    padding: 13px 20px;
+    border: none;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #1a73e8 0%, #1558b0 100%);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity .15s, transform .1s, box-shadow .15s;
+    box-shadow: 0 2px 8px rgba(26,115,232,.3);
+  }
+
+  .btn:hover { opacity: .92; box-shadow: 0 4px 14px rgba(26,115,232,.38); }
+  .btn:active { transform: scale(.98); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* Spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn.loading .spinner { display: block; }
+  .btn.loading .btn-text { opacity: .7; }
+
+  /* ── Footer note ── */
+  .footnote {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--gray-500);
+    margin-top: 1.25rem;
+  }
+
+
+  .btn.loading .spinner { display: block; }
+  .btn.loading .btn-text { opacity: .7; }
+
+  /* ── Footer note ── */
+  .footnote {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--gray-500);
+    margin-top: 1.25rem;
+  }
+
+
+  /* ── Page fermée ── */
+  .closed-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 2rem 3rem;
+    animation: slideUp .5s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .closed-screen.show { display: flex; }
+  .closed-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--coral-lt, #fff0f0);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    margin-bottom: 1.5rem;
+    border: 2px solid rgba(255,107,107,.2);
+  }
+  .closed-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400;
+    color: var(--gray-900, #202124);
+    margin-bottom: .75rem;
+  }
+  .closed-screen p {
+    font-size: 15px;
+    color: var(--gray-700, #5f6368);
+    line-height: 1.65;
+    max-width: 380px;
+  }
+  /* Loader discret */
+  .page-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--gray-500, #9aa0a6);
+    font-size: 14px;
+    gap: 10px;
+  }
+  .page-loader .spin {
+    width: 18px; height: 18px;
+    border: 2px solid var(--gray-200, #e8eaed);
+    border-top-color: var(--blue, #1a73e8);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Page fermée ── */
+  .closed-screen { display:none; flex-direction:column; align-items:center; text-align:center; padding:2.5rem 2rem 3rem; }
+  .closed-screen.show { display:flex; }
+  .closed-icon { font-size:52px; margin-bottom:1.25rem; }
+  .closed-screen h2 { font-family:'DM Serif Display',serif; font-size:22px; font-weight:400; color:var(--gray-900); margin-bottom:.75rem; }
+  .closed-screen p { font-size:15px; color:var(--gray-700); line-height:1.65; max-width:380px; }
+  .page-loader { display:none; align-items:center; justify-content:center; padding:3rem; color:var(--gray-500); font-size:14px; gap:10px; }
+  .page-loader.show { display:flex; }
+  .spin { width:18px; height:18px; border:2px solid var(--gray-200); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ══════════════════════════════════════
+     ÉCRAN DE CONFIRMATION — SPORTIF
+  ══════════════════════════════════════ */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    animation: successIn .6s cubic-bezier(.22,.61,.36,1) both;
+    width: 100%;
+  }
+  .success-screen.show { display: flex; }
+
+  @keyframes successIn {
+    from { opacity:0; transform:translateY(30px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Bandeau hero */
+  .success-hero {
+    width: 100%;
+    background: linear-gradient(135deg, #0ec4a8 0%, #089b85 100%);
+    padding: 2.5rem 2rem 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .success-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+  }
+  .success-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+  }
+  .success-medal {
+    position: relative; z-index: 1;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    border: 3px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 36px;
+    animation: medalPop .5s .3s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes medalPop {
+    from { transform: scale(0) rotate(-20deg); opacity:0; }
+    to   { transform: scale(1) rotate(0); opacity:1; }
+  }
+  .success-hero h2 {
+    position: relative; z-index: 1;
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; font-weight: 400;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: .5rem;
+    animation: fadeUp .5s .4s ease both;
+  }
+  .success-hero p {
+    position: relative; z-index: 1;
+    font-size: 14px;
+    color: rgba(255,255,255,.78);
+    animation: fadeUp .5s .5s ease both;
+  }
+
+  /* Contenu */
+  .success-content {
+    width: 100%;
+    padding: 0 2rem 2rem;
+    margin-top: -1.5rem;
+    position: relative; z-index: 2;
+  }
+
+  /* Carte récap */
+  .recap-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.10);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    animation: fadeUp .5s .55s ease both;
+  }
+  .recap-card-header {
+    background: linear-gradient(90deg, #f0f7ff, #e8f0fe);
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #e2ecff;
+  }
+  .recap-card-header span {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: #1a73e8;
+  }
+  .recap-rows { padding: 4px 0; }
+  .recap-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 18px;
+    border-bottom: 1px solid #f5f7ff;
+    gap: 12px;
+  }
+  .recap-row:last-child { border-bottom: none; }
+  .rk {
+    font-size: 12px; font-weight: 600;
+    color: #9aa0a6;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+  .rv {
+    font-size: 13.5px; font-weight: 600;
+    color: #202124;
+    text-align: right;
+  }
+
+  /* Badges créneaux */
+  .creneaux-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .creneau-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #e8f0fe; color: #1a73e8;
+    border: 1px solid #c5d9fa;
+    border-radius: 20px;
+    font-size: 11.5px; font-weight: 700;
+    padding: 4px 10px;
+  }
+
+  /* Carte email */
+  .email-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    padding: 16px 18px;
+    display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 1rem;
+    animation: fadeUp .5s .65s ease both;
+  }
+  .email-icon-wrap {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: #e8f0fe;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .email-icon-wrap svg { width: 20px; height: 20px; stroke: #1a73e8; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .email-card-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #202124; margin-bottom: 3px; }
+  .email-card-text span { font-size: 12.5px; color: #7a8ab0; line-height: 1.5; }
+
+  /* Carte contact */
+  .contact-card {
+    background: linear-gradient(135deg, #1a73e8 0%, #1558b0 100%);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeUp .5s .75s ease both;
+  }
+  .contact-icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .contact-card-text strong { display: block; font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .contact-card-text a { font-size: 13px; color: rgba(255,255,255,.85); text-decoration: none; }
+  .contact-card-text a:hover { color: #fff; }
+
+  /* Étapes */
+  .steps {
+    width: 100%;
+    padding: 0 2rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp .5s .7s ease both;
+  }
+  .steps-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: #9aa0a6;
+    margin-bottom: 12px;
+  }
+  .step {
+    display: flex; align-items: flex-start; gap: 12px;
+    margin-bottom: 12px;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a73e8, #4a90d9);
+    color: #fff;
+    font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-text strong { display: block; font-size: 13.5px; font-weight: 700; color: #202124; }
+  .step-text span { font-size: 12px; color: #7a8ab0; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-inner">
+        <div class="logo-wrap">
+          <img id="logo-img" src="https://asdgym.alwaysdata.net/LogoAsdGym.png" alt="Logo ASD Gym">
+        </div>
+        <h1>Préinscription ASD<br>Gymnastique loisirs</h1>
+        <p id="saison-label">Saison 2025 – 2026</p>
+      </div>
+    </div>
+
+    <!-- Loader -->
+    <div class="page-loader" id="page-loader">
+      <div class="spin"></div>&nbsp;Vérification en cours…
+    </div>
+
+    <!-- Fermé -->
+    <div class="closed-screen" id="closed-screen">
+      <div class="closed-icon">🔒</div>
+      <h2>Préinscriptions fermées</h2>
+      <p id="closed-message">Les préinscriptions sont actuellement fermées. Revenez bientôt !</p>
+    </div>
+
+    <!-- Form body -->
+    <div class="body">
+
+      <!-- Section enfant -->
+      <div class="section">
+        <div class="section-title">L'enfant</div>
+        <div class="row">
+          <div class="field" id="f-nom">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" placeholder="" autocomplete="family-name">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+          <div class="field" id="f-prenom">
+            <label for="prenom">Prénom</label>
+            <input type="text" id="prenom" name="prenom" placeholder="" autocomplete="given-name">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+        </div>
+        <div class="field" id="f-ddn">
+          <label for="datenaissance">Date de naissance</label>
+          <input type="date" id="datenaissance" name="datenaissance">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+      </div>
+
+      <!-- Section parent -->
+      <div class="section">
+        <div class="section-title">Parent / Responsable</div>
+        <div class="field" id="f-email">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="parent@exemple.fr" autocomplete="email">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+        <div class="field" id="f-tel">
+          <label for="tel">Téléphone</label>
+          <input type="tel" id="tel" name="tel" placeholder="0612345678" maxlength="10" autocomplete="tel">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+        <div class="field" id="f-adresse">
+          <label for="adresse">Adresse</label>
+          <input type="text" id="adresse" name="adresse" placeholder="Rue De La Haute Borne" autocomplete="street-address">
+          <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+          <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+        </div>
+        <div class="row">
+          <div class="field" id="f-cp">
+            <label for="codepostal">Code postal</label>
+            <input type="text" id="codepostal" name="codepostal" placeholder="93700" maxlength="5" autocomplete="postal-code">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+          <div class="field" id="f-ville">
+            <label for="ville">Ville</label>
+            <input type="text" id="ville" name="ville" placeholder="Drancy" autocomplete="address-level2">
+            <span class="ic v"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg></span>
+            <span class="ic e"><svg viewBox="0 0 16 16" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section créneaux -->
+      <div class="section">
+        <div class="section-title">Créneau souhaité</div>
+        <p class="creneau-hint">Sélectionnez 1 créneau.</p>
+        <div class="creneaux-grid" id="creneaux-container">
+          <!-- Créneaux chargés dynamiquement depuis status.php -->
+        </div>
+      </div>
+
+      <!-- Message retour -->
+      <div class="msg" id="msg"></div>
+
+      <!-- Bouton -->
+      <button class="btn" id="btn" type="button">
+        <div class="spinner"></div>
+        <span class="btn-text">Envoyer la préinscription</span>
+      </button>
+
+      <p class="footnote">Vos données sont utilisées uniquement dans le cadre de la gestion des inscriptions.</p>
+
+    </div><!-- /.body -->
+
+    <!-- Écran de succès -->
+    <div class="success-screen" id="success-screen">
+
+      <!-- Hero -->
+      <div class="success-hero">
+        <div class="success-medal">🏅</div>
+        <h2>Félicitations&nbsp;!<br>Préinscription enregistrée</h2>
+        <p>Bienvenue à l'ASD Gymnastique loisirs</p>
+      </div>
+
+      <!-- Récapitulatif -->
+      <div class="success-content">
+        <div class="recap-card">
+          <div class="recap-card-header">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#1a73e8" stroke-width="2" stroke-linecap="round"><rect x="1" y="1" width="12" height="12" rx="2"/><line x1="4" y1="4" x2="10" y2="4"/><line x1="4" y1="7" x2="10" y2="7"/><line x1="4" y1="10" x2="7" y2="10"/></svg>
+            <span>Récapitulatif de la préinscription</span>
+          </div>
+          <div class="recap-rows">
+            <div class="recap-row"><span class="rk">Enfant</span>    <span class="rv" id="s-enfant"></span></div>
+            <div class="recap-row"><span class="rk">Naissance</span> <span class="rv" id="s-ddn"></span></div>
+            <div class="recap-row"><span class="rk">Email</span>     <span class="rv" id="s-email"></span></div>
+            <div class="recap-row"><span class="rk">Téléphone</span> <span class="rv" id="s-tel"></span></div>
+            <div class="recap-row"><span class="rk">Adresse</span>   <span class="rv" id="s-adresse"></span></div>
+            <div class="recap-row">
+              <span class="rk">Créneaux</span>
+              <div class="creneaux-badges" id="s-creneaux"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="email-card">
+          <div class="email-icon-wrap">
+            <svg viewBox="0 0 20 20"><rect x="1" y="4" width="18" height="13" rx="2"/><polyline points="1 6 10 12 19 6"/></svg>
+          </div>
+          <div class="email-card-text">
+            <strong>Email de confirmation envoyé ✓</strong>
+            <span>Un récapitulatif a été envoyé à l'adresse indiquée.<br>Pensez à vérifier vos spams si vous ne le recevez pas.</span>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="contact-card">
+          <div class="contact-icon-wrap">📞</div>
+          <div class="contact-card-text">
+            <strong>Une question ? Contactez-nous</strong>
+            <a href="mailto:asd@valoa.fr">asd@valoa.fr</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /.card -->
+</div><!-- /.page -->
+
+<script>
+// ── Vérification ouverture inscriptions ─────────────────
+(function() {
+  var loader = document.getElementById('page-loader');
+  var closed = document.getElementById('closed-screen');
+  var body   = document.querySelector('.body');
+
+  function showForm()   { if(body) body.style.display=''; if(loader) loader.classList.remove('show'); }
+  function showLoader() { if(body) body.style.display='none'; if(loader) loader.classList.add('show'); }
+  function showClosed(msg) {
+    if(loader) loader.classList.remove('show');
+    if(body)   body.style.display='none';
+    var el = document.getElementById('closed-message');
+    if(el && msg) el.textContent = msg;
+    if(closed) closed.classList.add('show');
+  }
+
+  showLoader();
+
+  fetch('https://asdgym.alwaysdata.net/status.php?categorie=moustiques&t=' + Date.now(), {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      // Mettre à jour la saison
+      if(data.saison) {
+        var el = document.getElementById('saison-label');
+        if(el) el.textContent = 'Saison ' + data.saison;
+      }
+      // Générer les créneaux dynamiquement
+      if(data.creneaux && data.creneaux.length) {
+        buildCreneaux(data.creneaux);
+      }
+      if(data.ouvert){ showForm(); }
+      else { showClosed(data.message); }
+    })
+    .catch(function(){
+      showForm(); // En cas d'erreur réseau, on affiche le formulaire
+    });
+})();
+
+// ── Génération dynamique des créneaux ────────────────────
+function buildCreneaux(creneaux) {
+  var container = document.getElementById('creneaux-container');
+  if (!container) return;
+  container.innerHTML = creneaux.map(function(c, i) {
+    var id = 'c' + (i+1);
+    return '<div class="cb-slot">' +
+      '<input type="checkbox" id="' + id + '" name="creneaux[]" value="' + c + '">' +
+      '<label for="' + id + '"><span class="cb-box"></span> ' + c + '</label>' +
+    '</div>';
+  }).join('');
+  // Réattacher la limite max 1
+  container.querySelectorAll('input[type=checkbox]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      var checked = container.querySelectorAll('input:checked');
+      if (checked.length > 1) this.checked = false;
+    });
+  });
+}
+
+// --- Logo fallback ---
+document.getElementById('logo-img').onerror = function() {
+  var wrap = this.parentElement;
+  this.remove();
+  wrap.innerHTML = '<span class="logo-fallback">ASD</span>';
+};
+
+// --- Validators ---
+var validators = {
+  nom:          function(v) { return v.trim().length >= 2; },
+  prenom:       function(v) { return v.trim().length >= 2; },
+  datenaissance:function(v) { return v.length > 0; },
+  email:        function(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); },
+  tel:          function(v) { return /^[0-9]{10}$/.test(v); },
+  adresse:      function(v) { return v.trim().length >= 5; },
+  codepostal:   function(v) { return /^[0-9]{5}$/.test(v); },
+  ville:        function(v) { return v.trim().length >= 2; }
+};
+
+var fieldWrap = {
+  nom: 'f-nom', prenom: 'f-prenom', datenaissance: 'f-ddn',
+  email: 'f-email', tel: 'f-tel', adresse: 'f-adresse',
+  codepostal: 'f-cp', ville: 'f-ville'
+};
+
+function validateField(id) {
+  var input = document.getElementById(id);
+  var wrap  = document.getElementById(fieldWrap[id]);
+  if (!input || !wrap) return false;
+  var val   = input.value;
+  var valid = validators[id](val);
+  var touched = val.length > 0;
+  wrap.classList.toggle('ok', valid);
+  wrap.classList.toggle('ko', !valid && touched);
+  return valid;
+}
+
+// Attach live validation
+Object.keys(validators).forEach(function(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input',  function() { validateField(id); });
+  el.addEventListener('blur',   function() { validateField(id); });
+});
+
+// --- Créneaux: max 1 ---
+// Listener créneaux géré dynamiquement dans buildCreneaux()
+
+// --- Submit ---
+document.getElementById('btn').addEventListener('click', function() {
+  var msg = document.getElementById('msg');
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  // Validate all fields
+  var allValid = true;
+  Object.keys(validators).forEach(function(id) {
+    if (!validateField(id)) allValid = false;
+  });
+
+  // Validate créneaux
+  var creneaux = Array.from(document.querySelectorAll('input[name="creneaux[]"]:checked'))
+                      .map(function(c) { return c.value; });
+
+  if (creneaux.length === 0) {
+    msg.className = 'msg err';
+    msg.textContent = '⚠ Veuillez sélectionner au moins un créneau.';
+    return;
+  }
+
+  if (!allValid) {
+    msg.className = 'msg err';
+    msg.textContent = '⚠ Merci de corriger les champs en erreur avant d\'envoyer.';
+    return;
+  }
+
+  // Send
+  var btn = document.getElementById('btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.btn-text').textContent = 'Envoi en cours…';
+
+  var fd = new FormData();
+  ['nom','prenom','datenaissance','email','tel','adresse','codepostal','ville'].forEach(function(id) {
+    fd.append(id, document.getElementById(id).value.trim());
+  });
+  creneaux.forEach(function(c) { fd.append('creneaux[]', c); });
+
+  // Snapshot pour le récap affiché côté client
+  var snapNom     = document.getElementById('nom').value.trim();
+  var snapPrenom  = document.getElementById('prenom').value.trim();
+  var snapDdn     = document.getElementById('datenaissance').value;
+  var snapEmail   = document.getElementById('email').value.trim();
+  var snapTel     = document.getElementById('tel').value.trim();
+  var snapAdresse = document.getElementById('adresse').value.trim();
+  var snapCp      = document.getElementById('codepostal').value.trim();
+  var snapVille   = document.getElementById('ville').value.trim();
+
+  fetch('https://asdgym.alwaysdata.net/insert.php', { method: 'POST', body: fd })
+    .then(function(r) { return r.text(); })
+    .then(function() {
+      // Remplir le récap affiché
+      document.getElementById('s-enfant').textContent   = snapPrenom + ' ' + snapNom;
+      var ddnParts = snapDdn.split('-');
+      document.getElementById('s-ddn').textContent      = ddnParts.length === 3 ? ddnParts[2] + '/' + ddnParts[1] + '/' + ddnParts[0] : snapDdn;
+      document.getElementById('s-email').textContent    = snapEmail;
+      document.getElementById('s-tel').textContent      = snapTel;
+      document.getElementById('s-adresse').textContent  = snapAdresse + ', ' + snapCp + ' ' + snapVille;
+      var crBadges = creneaux.map(function(c) {
+        return '<span class="creneau-badge">🗓 ' + c + '</span>';
+      }).join('');
+      document.getElementById('s-creneaux').innerHTML = '<div class="creneaux-badges">' + crBadges + '</div>';
+
+      // Masquer le formulaire et afficher l'écran de succès
+      document.querySelector('.body').style.display = 'none';
+      document.getElementById('success-screen').classList.add('show');
+      document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    })
+    .catch(function() {
+      msg.className = 'msg err';
+      msg.textContent = '⚠ Une erreur est survenue, veuillez réessayer.';
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.querySelector('.btn-text').textContent = 'Envoyer la préinscription';
+    });
+});
+</script>
+</body>
+</html>

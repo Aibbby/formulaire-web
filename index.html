@@ -823,7 +823,7 @@
 
   showLoader();
 
-  fetch('https://asdgym.alwaysdata.net/status.php?t=' + Date.now(), {cache:'no-store'})
+  fetch('https://asdgym.alwaysdata.net/status.php?categorie=loisirs&t=' + Date.now(), {cache:'no-store'})
     .then(function(r){ return r.json(); })
     .then(function(data){
       // Mettre à jour la saison

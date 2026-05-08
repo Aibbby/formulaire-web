@@ -851,10 +851,14 @@
   fetch('https://asdgym.alwaysdata.net/status.php', {cache:'no-cache'})
     .then(function(r){ return r.json(); })
     .then(function(data){
-      // Mettre à jour la saison si fournie
+      // Mettre à jour la saison
       if(data.saison) {
         var el = document.getElementById('saison-label');
         if(el) el.textContent = 'Saison ' + data.saison;
+      }
+      // Générer les créneaux dynamiquement
+      if(data.creneaux && data.creneaux.length) {
+        buildCreneaux(data.creneaux);
       }
       if(data.ouvert){ showForm(); }
       else { showClosed(data.message); }
@@ -863,6 +867,26 @@
       showForm(); // En cas d'erreur réseau, on affiche le formulaire
     });
 })();
+
+// ── Génération dynamique des créneaux ────────────────────
+function buildCreneaux(creneaux) {
+  var container = document.getElementById('creneaux-container');
+  if (!container) return;
+  container.innerHTML = creneaux.map(function(c, i) {
+    var id = 'c' + (i+1);
+    return '<div class="cb-slot">' +
+      '<input type="checkbox" id="' + id + '" name="creneaux[]" value="' + c + '">' +
+      '<label for="' + id + '"><span class="cb-box"></span> ' + c + '</label>' +
+    '</div>';
+  }).join('');
+  // Réattacher la limite max 1
+  container.querySelectorAll('input[type=checkbox]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      var checked = container.querySelectorAll('input:checked');
+      if (checked.length > 1) this.checked = false;
+    });
+  });
+}
 
 // --- Logo fallback ---
 document.getElementById('logo-img').onerror = function() {
@@ -910,15 +934,7 @@ Object.keys(validators).forEach(function(id) {
 });
 
 // --- Créneaux: max 1 ---
-var checkboxes = document.querySelectorAll('input[name="creneaux[]"]');
-checkboxes.forEach(function(cb) {
-  cb.addEventListener('change', function() {
-    var checked = document.querySelectorAll('input[name="creneaux[]"]:checked');
-    if (checked.length > 1) {
-      this.checked = false;
-    }
-  });
-});
+// Listener créneaux géré dynamiquement dans buildCreneaux()
 
 // --- Submit ---
 document.getElementById('btn').addEventListener('click', function() {

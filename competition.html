@@ -735,8 +735,6 @@
         </div>
       </div>
 
-      <!-- Créneaux masqués pour Compétition -->
-      <input type="hidden" name="creneaux[]" value="Compétition">
 
       <!-- Message retour -->
       <div class="msg" id="msg"></div>
@@ -936,11 +934,8 @@ document.getElementById('btn').addEventListener('click', function() {
     if (!validateField(id)) allValid = false;
   });
 
-  // Validate créneaux
-  var creneaux = Array.from(document.querySelectorAll('input[name="creneaux[]"]'))
-                      .map(function(c) { return c.value; });
-
-  // Pas de validation créneaux pour la compétition
+  // Créneaux fixes pour la compétition
+  var creneaux = ['Compétition'];
 
   if (!allValid) {
     msg.className = 'msg err';

@@ -978,10 +978,7 @@ document.getElementById('btn').addEventListener('click', function() {
       document.getElementById('s-email').textContent    = snapEmail;
       document.getElementById('s-tel').textContent      = snapTel;
       document.getElementById('s-adresse').textContent  = snapAdresse + ', ' + snapCp + ' ' + snapVille;
-      var crBadges = creneaux.map(function(c) {
-        return '<span class="creneau-badge">🗓 ' + c + '</span>';
-      }).join('');
-      document.getElementById('s-creneaux').innerHTML = '<div class="creneaux-badges">' + crBadges + '</div>';
+      // Pas de badges créneaux pour la compétition
 
       // Masquer le formulaire et afficher l'écran de succès
       document.querySelector('.body').style.display = 'none';

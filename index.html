@@ -831,6 +831,11 @@
         var el = document.getElementById('saison-label');
         if(el) el.textContent = 'Saison ' + data.saison;
       }
+      // Mettre à jour l'email de contact
+      if (data.email_club) {
+        var el = document.getElementById('contact-email');
+        if (el) { el.href = 'mailto:' + data.email_club; el.textContent = data.email_club; }
+      }
       // Générer les créneaux dynamiquement
       if(data.creneaux && data.creneaux.length) {
         buildCreneaux(data.creneaux);
@@ -946,6 +951,7 @@ document.getElementById('btn').addEventListener('click', function() {
   btn.querySelector('.btn-text').textContent = 'Envoi en cours…';
 
   var fd = new FormData();
+  fd.append('categorie', 'loisirs');
   ['nom','prenom','datenaissance','email','tel','adresse','codepostal','ville'].forEach(function(id) {
     fd.append(id, document.getElementById(id).value.trim());
   });

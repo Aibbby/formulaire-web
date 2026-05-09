@@ -802,7 +802,7 @@
           <div class="contact-icon-wrap">📞</div>
           <div class="contact-card-text">
             <strong>Une question ? Contactez-nous</strong>
-            <a href="mailto:asd@valoa.fr">asd@valoa.fr</a>
+            <a href="mailto:" id="contact-email">asd@valoa.fr</a>
           </div>
         </div>
       </div>
@@ -838,6 +838,11 @@
       if(data.saison) {
         var el = document.getElementById('saison-label');
         if(el) el.textContent = 'Saison ' + data.saison;
+      }
+      // Mettre à jour l'email de contact
+      if (data.email_club) {
+        var el = document.getElementById('contact-email');
+        if (el) { el.href = 'mailto:' + data.email_club; el.textContent = data.email_club; }
       }
       // Générer les sous-catégories (compétition uniquement)
       if(data.sous_cats && data.sous_cats.length) {

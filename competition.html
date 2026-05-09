@@ -727,6 +727,14 @@
       </div>
 
       <!-- Section créneaux -->
+      <div class="section" id="section-sous-cat" style="display:none">
+        <div class="section-title">Sous-catégorie</div>
+        <p class="creneau-hint">Sélectionnez votre sous-catégorie.</p>
+        <div class="creneaux-grid" id="sous-cat-container">
+          <!-- Sous-catégories chargées dynamiquement -->
+        </div>
+      </div>
+
       <div class="section">
         <div class="section-title">Créneau souhaité</div>
         <p class="creneau-hint">Sélectionnez 1 créneau.</p>
@@ -831,6 +839,10 @@
         var el = document.getElementById('saison-label');
         if(el) el.textContent = 'Saison ' + data.saison;
       }
+      // Générer les sous-catégories (compétition uniquement)
+      if(data.sous_cats && data.sous_cats.length) {
+        buildSousCats(data.sous_cats);
+      }
       // Générer les créneaux dynamiquement
       if(data.creneaux && data.creneaux.length) {
         buildCreneaux(data.creneaux);
@@ -842,6 +854,29 @@
       showForm(); // En cas d'erreur réseau, on affiche le formulaire
     });
 })();
+
+// ── Génération dynamique des sous-catégories ─────────────
+function buildSousCats(sousCats) {
+  var section   = document.getElementById('section-sous-cat');
+  var container = document.getElementById('sous-cat-container');
+  if (!sousCats || !sousCats.length) {
+    if (section) section.style.display = 'none';
+    return;
+  }
+  if (section) section.style.display = '';
+  container.innerHTML = sousCats.map(function(sc, i) {
+    var id = 'sc' + i;
+    return '<div class="cb-slot">' +
+      '<input type="radio" name="sous_categorie" id="' + id + '" value="' + sc + '">' +
+      '<label for="' + id + '"><span class="cb-box"></span> ' + sc + '</label>' +
+    '</div>';
+  }).join('');
+
+  // Style radio comme checkbox
+  container.querySelectorAll('input[type=radio]').forEach(function(r) {
+    r.style.cssText = 'position:absolute;opacity:0;width:0;height:0';
+  });
+}
 
 // ── Génération dynamique des créneaux ────────────────────
 function buildCreneaux(creneaux) {
@@ -947,6 +982,8 @@ document.getElementById('btn').addEventListener('click', function() {
 
   var fd = new FormData();
   fd.append('categorie', 'competition');
+  var scChecked = document.querySelector('input[name="sous_categorie"]:checked');
+  if (scChecked) fd.append('sous_categorie', scChecked.value);
   ['nom','prenom','datenaissance','email','tel','adresse','codepostal','ville'].forEach(function(id) {
     fd.append(id, document.getElementById(id).value.trim());
   });

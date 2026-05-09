@@ -755,7 +755,6 @@
       <div class="success-hero">
         <div class="success-medal">🏅</div>
         <h2>Félicitations&nbsp;!<br>Préinscription enregistrée</h2>
-        <p>Bienvenue à l'ASD Gymnastique loisirs</p>
       </div>
 
       <!-- Récapitulatif -->
@@ -830,11 +829,6 @@
       if(data.saison) {
         var el = document.getElementById('saison-label');
         if(el) el.textContent = 'Saison ' + data.saison;
-      }
-      // Mettre à jour l'email de contact
-      if (data.email_club) {
-        var el = document.getElementById('contact-email');
-        if (el) { el.href = 'mailto:' + data.email_club; el.textContent = data.email_club; }
       }
       // Générer les créneaux dynamiquement
       if(data.creneaux && data.creneaux.length) {

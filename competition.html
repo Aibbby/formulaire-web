@@ -933,8 +933,8 @@ document.getElementById('btn').addEventListener('click', function() {
     if (!validateField(id)) allValid = false;
   });
 
-  // Créneaux fixes pour la compétition
-  var creneaux = ['Compétition'];
+  // Pas de créneaux pour la compétition
+  var creneaux = [];
 
   if (!allValid) {
     msg.className = 'msg err';

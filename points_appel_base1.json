@@ -1,0 +1,10 @@
+{
+  "PNH": {
+    "host": "NXLIASM012",
+    "port": 22201
+  },
+  "PNR": {
+    "host": "NXLIASM013",
+    "port": 22202
+  }
+}

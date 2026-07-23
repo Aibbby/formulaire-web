@@ -1,506 +1,108 @@
-import datetime
-import socket
-import threading
-import time
-import tkinter as tk
-from tkinter import ttk
-
-TCP_PORT = 22201
-
-
-class AppSimulateur:
-
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Simulateur ISO 8583 Monétique - Port 22201")
-        self.root.geometry("1150x800")
-
-        self.client_socket = None
-
-        self.root.rowconfigure(0, weight=0)
-        self.root.rowconfigure(1, weight=1)
-        self.root.columnconfigure(0, weight=1)
-
-        # =========================
-        # ZONE HAUTE
-        # =========================
-        self.frame_haut = tk.Frame(self.root, bg="#eceff1", padx=10, pady=10)
-        self.frame_haut.grid(row=0, column=0, sticky="nsew")
-
-        for i in range(8):
-            self.frame_haut.columnconfigure(i, weight=1)
-
-        # PAN
-        tk.Label(self.frame_haut, text="PAN", bg="#eceff1", font=("Arial", 10, "bold")).grid(
-            row=0, column=0, sticky="w", padx=5, pady=5
-        )
-
-        vcmd_pan = (self.root.register(self.valider_pan), "%P")
-        self.entry_pan = tk.Entry(
-            self.frame_haut,
-            validate="key",
-            validatecommand=vcmd_pan,
-            font=("Consolas", 11),
-            width=16
-        )
-        self.entry_pan.grid(row=0, column=1, sticky="w", padx=5, pady=5)
-
-        # Date Val
-        tk.Label(self.frame_haut, text="Date Val", bg="#eceff1", font=("Arial", 10, "bold")).grid(
-            row=0, column=2, sticky="w", padx=5, pady=5
-        )
-
-        vcmd_date = (self.root.register(self.valider_date_val), "%P")
-        self.entry_date_val = tk.Entry(
-            self.frame_haut,
-            validate="key",
-            validatecommand=vcmd_date,
-            font=("Consolas", 11),
-            width=5
-        )
-        self.entry_date_val.grid(row=0, column=3, sticky="w", padx=5, pady=5)
-
-        # PNR / PNH
-        self.var_pnr = tk.BooleanVar(value=False)
-        self.var_pnh = tk.BooleanVar(value=True)
-
-        self.check_pnr = tk.Checkbutton(
-            self.frame_haut,
-            text="PNR",
-            variable=self.var_pnr,
-            command=self.on_check_pnr,
-            bg="#eceff1",
-            font=("Arial", 10, "bold")
-        )
-        self.check_pnr.grid(row=0, column=4, sticky="w", padx=5, pady=5)
-
-        self.check_pnh = tk.Checkbutton(
-            self.frame_haut,
-            text="PNH",
-            variable=self.var_pnh,
-            command=self.on_check_pnh,
-            bg="#eceff1",
-            font=("Arial", 10, "bold")
-        )
-        self.check_pnh.grid(row=0, column=5, sticky="w", padx=5, pady=5)
-
-        # Message
-        tk.Label(self.frame_haut, text="Message", bg="#eceff1", font=("Arial", 10, "bold")).grid(
-            row=0, column=6, sticky="w", padx=5, pady=5
-        )
-
-        self.combo_message = ttk.Combobox(
-            self.frame_haut,
-            values=["TAR", "TNA"],
-            state="readonly",
-            font=("Arial", 10),
-            width=8
-        )
-        self.combo_message.grid(row=0, column=7, sticky="w", padx=5, pady=5)
-        self.combo_message.set("TAR")
-
-        # Boutons
-        self.bouton_connexion = tk.Button(
-            self.frame_haut,
-            text="Connexion",
-            command=self.demarrer_connexion,
-            font=("Arial", 11, "bold"),
-            bg="#2196F3",
-            fg="white",
-            padx=15,
-            pady=8,
-        )
-        self.bouton_connexion.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="we")
-
-        self.bouton_envoyer_0100 = tk.Button(
-            self.frame_haut,
-            text="Envoyer Message 0100",
-            command=self.declencher_envoi_0100,
-            font=("Arial", 11, "bold"),
-            bg="#4CAF50",
-            fg="white",
-            padx=15,
-            pady=8,
-            state="disabled"
-        )
-        self.bouton_envoyer_0100.grid(row=1, column=2, columnspan=2, padx=5, pady=10, sticky="we")
-
-        self.bouton_afficher = tk.Button(
-            self.frame_haut,
-            text="Afficher paramètres",
-            command=self.afficher_parametres,
-            font=("Arial", 11, "bold"),
-            bg="#FF9800",
-            fg="white",
-            padx=15,
-            pady=8,
-        )
-        self.bouton_afficher.grid(row=1, column=4, columnspan=2, padx=5, pady=10, sticky="we")
-
-        # =========================
-        # CONSOLE
-        # =========================
-        self.frame_bas = tk.Frame(self.root)
-        self.frame_bas.grid(row=1, column=0, sticky="nsew")
-        self.frame_bas.rowconfigure(0, weight=1)
-        self.frame_bas.columnconfigure(0, weight=1)
-
-        self.console = tk.Text(
-            self.frame_bas,
-            bg="#121212",
-            fg="#00FF66",
-            insertbackground="white",
-            font=("Consolas", 10),
-            state="disabled",
-        )
-        self.console.grid(row=0, column=0, sticky="nsew")
-
-        scrollbar = tk.Scrollbar(self.frame_bas, command=self.console.yview)
-        scrollbar.grid(row=0, column=1, sticky="ns")
-        self.console.config(yscrollcommand=scrollbar.set)
-
-        self.ecrire_console("Simulateur prêt. Connectez-vous d'abord pour activer l'envoi manuel.")
-
-    # =========================
-    # VALIDATIONS
-    # =========================
-    def valider_pan(self, valeur):
-        if valeur == "":
-            return True
-        return valeur.isdigit() and len(valeur) <= 16
-
-    def valider_date_val(self, valeur):
-        if valeur == "":
-            return True
-
-        if any(c not in "0123456789/" for c in valeur):
-            return False
-
-        if len(valeur) == 2 and "/" not in valeur:
-            self.entry_date_val.after(1, lambda: self.entry_date_val.insert(tk.END, "/"))
-            return True
-
-        if len(valeur) > 5:
-            return False
-
-        if "/" in valeur:
-            if valeur.count("/") > 1:
-                return False
-            if valeur.index("/") != 2:
-                return False
-
-        return True
-
-    # =========================
-    # GESTION PNR / PNH
-    # =========================
-    def on_check_pnr(self):
-        if self.var_pnr.get():
-            self.var_pnh.set(False)
-            self.ecrire_console("Environnement sélectionné : PNR -> Hôte NXLRASM011, Port 22201")
-        else:
-            if not self.var_pnh.get():
-                self.var_pnh.set(True)
-
-    def on_check_pnh(self):
-        if self.var_pnh.get():
-            self.var_pnr.set(False)
-            self.ecrire_console("Environnement sélectionné : PNH -> Hôte NXLIASM012, Port 22201")
-        else:
-            if not self.var_pnr.get():
-                self.var_pnr.set(True)
-
-    def get_host_port_selectionnes(self):
-        if self.var_pnr.get():
-            return "NXLRASM011", 22201
-        return "NXLIASM012", 22201
-
-    # =========================
-    # OUTILS UI
-    # =========================
-    def ecrire_console(self, message):
-        heure = datetime.datetime.now().strftime("[%H:%M:%S] ")
-        self.root.after(0, lambda: self._ecrire_dans_les_faits(heure + message + "\n"))
-
-    def _ecrire_dans_les_faits(self, texte):
-        self.console.config(state="normal")
-        self.console.insert(tk.END, texte)
-        self.console.see(tk.END)
-        self.console.config(state="disabled")
-
-    def afficher_parametres(self):
-        pan = self.entry_pan.get().strip()
-        date_val = self.entry_date_val.get().strip()
-        pnr = self.var_pnr.get()
-        pnh = self.var_pnh.get()
-        message = self.combo_message.get()
-        host, port = self.get_host_port_selectionnes()
-
-        self.ecrire_console("=== PARAMÈTRES SAISIS ===")
-        self.ecrire_console(f"PAN      : {pan if pan else '(vide)'}")
-        self.ecrire_console(f"Date Val : {date_val if date_val else '(vide)'}")
-        self.ecrire_console(f"PNR      : {'Oui' if pnr else 'Non'}")
-        self.ecrire_console(f"PNH      : {'Oui' if pnh else 'Non'}")
-        self.ecrire_console(f"Message  : {message}")
-        self.ecrire_console(f"Hôte     : {host}")
-        self.ecrire_console(f"Port     : {port}")
-        self.ecrire_console("=========================")
-
-    # =========================
-    # LOGIQUE ISO / TCP
-    # =========================
-    def demarrer_connexion(self):
-        self.bouton_connexion.config(state="disabled")
-        thread = threading.Thread(target=self.client_tcp)
-        thread.daemon = True
-        thread.start()
-
-    def calculer_37_03_depuis_stan(self, stan_hexa):
-        try:
-            valeur_stan = int(stan_hexa)
-        except ValueError:
-            valeur_stan = int(stan_hexa, 16)
-
-        base_calcul = 4791
-        valeur_calcul_rrn = base_calcul + valeur_stan
-        chaine_ascii_rrn = f"{valeur_calcul_rrn:06d}"
-
-        ascii_hexa_resultat = ""
-        for caractere in chaine_ascii_rrn:
-            ascii_hexa_resultat += f"F{caractere}"
-
-        return ascii_hexa_resultat
-
-    def generer_reponse_0810_strict(self, champ7_recu, champ11_recu, champ70_recu):
-        try:
-            prefixe_longueur_tcp = "00400000"
-            header_mti_bitmaps = "160102004000000000000000000000000000000000000810822000000A0000000400000000000000"
-            champ7_nouveau = champ7_recu
-            champ11_nouveau = champ11_recu
-
-            partie_fixe_rrn = "F6F1F9F6"
-            maintenant_pc = datetime.datetime.now()
-            heure_moins_un = (maintenant_pc - datetime.timedelta(hours=1)).strftime("%H")
-            rrn_heure_ascii = f"F{heure_moins_un[0]}F{heure_moins_un[1]}"
-            rrn_stan_ascii = self.calculer_37_03_depuis_stan(champ11_nouveau)
-
-            champ37_nouveau = partie_fixe_rrn + rrn_heure_ascii + rrn_stan_ascii
-            champ39 = "F0F0"
-            champ70_nouveau = champ70_recu
-
-            trame_generee = (
-                prefixe_longueur_tcp
-                + header_mti_bitmaps
-                + champ7_nouveau
-                + champ11_nouveau
-                + champ37_nouveau
-                + champ39
-                + champ70_nouveau
-            )
-            return trame_generee
-        except Exception:
-            return (
-                "00400000160102004000000000000000000000000000000000000810822000000A0000000400000000000000"
-                + champ7_recu
-                + champ11_recu
-                + "F6F1F9F6F1F8F0F0F4F8F0F9F0F0"
-                + champ70_recu
-            )
-
-    def parser_et_afficher_0100(self, trame_0100):
-        lignes = []
-        lignes.append("=" * 85)
-        lignes.append("──► ENVOI FLUX FINANCIER D'AUTORISATION (Tx) - MTI 0100")
-        lignes.append(f"Brut : {trame_0100}")
-        lignes.append("-" * 85)
-
-        try:
-            trame = trame_0100.replace(" ", "").replace("\n", "")
-
-            longueur = trame[0:8]
-            header = trame[8:52]
-            mti = trame[52:56]
-            bitmap1 = trame[56:72]
-            bitmap2 = trame[72:88]
-
-            lignes.append(f"  • Préfixe de Longueur TCP : {longueur}")
-            lignes.append(f"  • En-tête Réseau 3-Bytes  : {trame[8:14]}")
-            lignes.append(f"  • Header Session          : {header}")
-            lignes.append(f"  • MTI                     : {mti}")
-            lignes.append(f"  • Bitmaps (1 et 2)        : {bitmap1} {bitmap2}")
-
-            champ7 = trame[88:98]
-            lignes.append(f"  • [DE-007] Date/Heure Transmission : {champ7}")
-
-            champ11 = trame[98:104]
-            lignes.append(f"  • [DE-011] STAN                    : {champ11}")
-
-            champ37 = trame[134:158]
-            lignes.append(f"  • [DE-037] RRN                     : {champ37}")
-
-            lignes.append("=" * 85)
-            self.ecrire_console("\n".join(lignes))
-        except Exception as e:
-            self.ecrire_console(f"Erreur lors du parsing visuel : {str(e)}")
-
-    def declencher_envoi_0100(self):
-        if self.client_socket is None:
-            self.ecrire_console("Action impossible : Non connecté au serveur.")
-            return
-
-        self.bouton_envoyer_0100.config(state="disabled")
-
-        thread_envoi = threading.Thread(target=self._envoi_execution_0100)
-        thread_envoi.daemon = True
-        thread_envoi.start()
-
-    def _envoi_execution_0100(self):
-        try:
-            pan = self.entry_pan.get().strip()
-            date_val = self.entry_date_val.get().strip()
-            message = self.combo_message.get()
-            environnement = "PNR" if self.var_pnr.get() else "PNH"
-
-            self.ecrire_console("Préparation et envoi immédiat du message financier 0100...")
-            self.ecrire_console(
-                f"Paramètres actifs -> PAN: {pan if pan else '(vide)'} | "
-                f"Date Val: {date_val if date_val else '(vide)'} | "
-                f"Env: {environnement} | Message: {message}"
-            )
-
-            trame_0100_brute = (
-                "00 FE 00 00 "
-                "16 01 02 00 FE 00 00 00 "
-                "00 00 00 00 00 00 00 00 "
-                "00 00 00 00 00 00 01 00 "
-                "F6 66 64 81 08 20 A0 16 "
-                "00 00 00 00 00 00 00 24 "
-                "10 49 90 09 35 81 49 71 "
-                "11 00 00 00 00 00 00 00 "
-                "00 00 00 00 00 00 00 00 "
-                "07 15 13 55 45 05 65 59 "
-                "57 00 48 55 26 10 07 07 "
-                "60 12 02 50 00 00 51 06 "
-                "49 75 72 F6 F1 F9 F6 F1 "
-                "F3 F0 F0 F4 F8 F5 F5 E3 "
-                "D6 D2 40 C1 C3 E3 40 40 "
-                "40 40 40 40 40 40 40 40 "
-                "40 40 40 40 40 40 40 40 "
-                "D7 81 99 89 A2 40 40 40 "
-                "40 40 40 40 40 C6 D9 09 "
-                "78 09 78 06 00 00 00 40 "
-                "00 00 10 40 00 00 00 00 "
-                "00 00 00 01 26 19 65 37 "
-                "45 00 01 07 A0 00 00 00 "
-                "02 37 00 3B 68 00 38 03 "
-                "0B F4 F0 F0 F1 F0 F0 F3 "
-                "F0 F2 F7 F3 05 12 F8 F8 "
-                "F8 F8 F2 F4 F0 F7 F0 F7 "
-                "F1 F1 F2 F8 F8 F4 F5 F6 "
-                "0B 12 F8 F8 F8 F8 F2 F4 "
-                "F0 F7 F0 F7 F1 F1 F2 F8 "
-                "F8 F4 F5 F6 08 01 C1 0E "
-                "00 40 00 00 00 00 00 00 "
-                "F0 F0 40 40 40 40 "
-            )
-
-            trame_0100_hex = trame_0100_brute.replace(" ", "").replace("\n", "")
-
-            self.parser_et_afficher_0100(trame_0100_hex)
-            self.client_socket.sendall(bytes.fromhex(trame_0100_hex))
-            self.ecrire_console("Message d'autorisation 0100 envoyé. En attente de la réponse 0110 du serveur...")
-
-        except Exception as e:
-            self.ecrire_console(f"Erreur lors de l'envoi manuel 0100 : {str(e)}")
-            self.root.after(0, lambda: self.bouton_envoyer_0100.config(state="normal"))
-
-    def client_tcp(self):
-        host, port = self.get_host_port_selectionnes()
-        self.ecrire_console(f"Connexion au serveur : {host}:{port}...")
-
-        try:
-            self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.client_socket.settimeout(60.0)
-            self.client_socket.connect((host, port))
-
-            self.root.after(0, lambda: self.bouton_envoyer_0100.config(state="normal"))
-            self.ecrire_console(f"Connecté de manière stable à {host}:{port}. Le bouton d'envoi 0100 est activé.")
-
-            compteur_0800 = 0
-
-            while True:
-                try:
-                    data_rx = self.client_socket.recv(4096)
-
-                    if not data_rx:
-                        self.ecrire_console("Le serveur distant a clos la connexion socket.")
-                        break
-
-                    hexa_recu = data_rx.hex().upper()
-
-                    if "160102" in hexa_recu:
-                        idx_sync = hexa_recu.index("160102")
-                        if idx_sync >= 8:
-                            hexa_recu = hexa_recu[idx_sync - 8:]
-                        else:
-                            hexa_recu = hexa_recu[idx_sync:]
-                    else:
-                        self.ecrire_console("Message reçu non conforme (Pas de '160102' détecté).")
-                        continue
-
-                    if "0800" in hexa_recu:
-                        compteur_0800 += 1
-                        self.ecrire_console(f"--- message ISO 0800 Reçu (N°{compteur_0800}) ---\nRx (Brut) : {hexa_recu}")
-
-                        champ7_recu = hexa_recu[88:98] if len(hexa_recu) >= 98 else "0715091638"
-                        champ11_recu = hexa_recu[98:104] if len(hexa_recu) >= 104 else "000018"
-                        champ70_recu = hexa_recu.strip()[-4:]
-                        if not champ70_recu or len(champ70_recu) != 4:
-                            champ70_recu = "0071"
-
-                        self.ecrire_console(
-                            f"Champs extraits de la 0800 -> Date: {champ7_recu} | STAN: {champ11_recu} | Mgt Code: {champ70_recu}"
-                        )
-
-                        self.ecrire_console("En attente de 1 seconde avant de répondre (0810)...")
-                        time.sleep(1.0)
-
-                        reponse_0810 = self.generer_reponse_0810_strict(champ7_recu, champ11_recu, champ70_recu)
-                        self.client_socket.sendall(bytes.fromhex(reponse_0810))
-                        self.ecrire_console(f"Réponse 0810 (N°{compteur_0800}) émise.")
-
-                    elif "0110" in hexa_recu:
-                        self.ecrire_console("=" * 85)
-                        self.ecrire_console("◄── RÉCEPTION RÉPONSE D'AUTORISATION (Rx) - MTI 0110")
-                        self.ecrire_console(f"Rx Brut (0110) : {hexa_recu}")
-
-                        self.root.after(0, lambda: self.bouton_envoyer_0100.config(state="normal"))
-
-                        if "F0F0" in hexa_recu:
-                            self.ecrire_console("  • Statut de la transaction : APPROUVÉ (Code 39 = '00')")
-                        elif "F0F5" in hexa_recu:
-                            self.ecrire_console("  • Statut de la transaction : REJETÉ (Code 39 = '05')")
-                        else:
-                            self.ecrire_console("  • Statut de la transaction : Traité")
-                        self.ecrire_console("=" * 85)
-
-                    else:
-                        self.ecrire_console(f"Message reçu et non traité : {hexa_recu}")
-
-                except socket.timeout:
-                    self.ecrire_console("Aucune activité réseau depuis 60s (Écoute toujours active)...")
-                    continue
-
-        except Exception as e:
-            self.ecrire_console(f"Erreur réseau : {str(e)}")
-
-        self.client_socket = None
-        self.root.after(0, lambda: self.bouton_envoyer_0100.config(state="disabled"))
-        self.ecrire_console("Session TCP/IP terminée.")
-        self.root.after(0, lambda: self.bouton_connexion.config(state="normal"))
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = AppSimulateur(root)
-    root.mainloop()
+16010201E700000000000000000000000000000000000100F66664810860A016000000000000012C104148190001130255000000000000000000000000000000072216133205655957004919290207076012025000005106497572F6F2F0F3F1F6F0F0F4F9F1F9F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0E3D6D240C1C3E3404040404040404040404040404040404040D7819989A24040404040404040C6D90978097806000000400000104000000000000000012620362012000107A000000002370000006168005E030BF4F0F0F1F0F0F3F0F2F7F30520A39692A39692F7F8F8F8F8F2F4F0F7F0F7F1F1F2F8F0F0F0F0F0F2F8F8F5F3F50B20A39692A39692F7F8F8F8F8F2F4F0F7F0F7F1F1F2F8F0F0F0F0F0F2F8F8F5F3F50604F2F9F0F60702F0F20801C1B101006F0102F0F10203C6D9C103308485A5898385408984F0F0F14086A28799A24085A387A340A399A899A3A8409585A8409985A840A8A3408585868995F1040FF0F0F3F3F6F1F2F3F4F5F6F7F8F9F00505D3899396A406098381974083859987A8070FF2F5F54BF2F5F54BF2F5F54BF2F5F502003C0301F00401F00502F0F00602F0F00702F0F10802F0F30902F0F10A20AE5F4675A78059F7E3F045C83C54C592C564CBA517851055A736A412207925110E0040000000000000F0F040404040
+
+
+   26137	00	17:14:10,28		Emission Message	0100 Generic Token Activation Request Base I	Emettre le contenu de la Variable Structurée [SYS] Message en préparation, et attendre la réponse pendant 60000 ms	1		
+	Message		
+		Message Header		
+			H01 - Header Length	22	
+			H02 - Header Flag and Format	00000001	
+			H03 - Text Format	2	
+			H04 - Total Message Length	487	
+			H05 - Destination Station ID	000000	
+			H06 - Source Station ID	000000	
+			H07 - Round-Trip Control Information	00000000	
+			H08 - BASE I Flags	0000000000000000	
+			H09 - Message Status Flags	000000000000000000000000	
+			H10 - Batch Number	0	
+			H11 - Reserved	000000	
+			H12 - User Information	00	
+		MTI	0100	
+		ISO 8583 - 87		
+			Bit Map Primary (Binary)		
+			Bit Map Secondary (Binary)		
+			P002 - Primary Account Number	4148190001130255	
+			P003 - Processing Code		
+				P003.01 - Processing Code 1-2	00	
+				P003.02 - 'From' Account Type (3-4)	00	
+				P003.03 - 'To' Account Type (5-6)	00	
+			P004 - Amount, Transaction	0	
+			P006 - Amount, Cardholder Billing	000000000000	
+			P007 - Transmission Date and Time	0722161332	
+			P010 - Conversion Rate, Cardholder Billing	05655957	
+			P011 - Systems Trace Audit Number	4919	
+			P014 - Date, Expiration	2902	
+			P015 - Date, Settlement	0707	
+			P018 - Merchant Type	6012	
+			P019 - Acquiring Institution Country Code	250	
+			P022 - Point of Service Entry Mode		
+				P022.01 - PAN Entry Mode	00	
+				P022.02 - PIN Entry Capability	0	
+			P025 - Point of Service Condition Code	51	
+			P032 - Acquiring Institution Identification Code	497572	
+			P037 -PD- Retrieval Reference Number		
+				#037.01 - Transmission date	6203	
+				#037.02 - Transmission hour	16	
+				#037.03	004919	
+			P042 - Card Acceptor Identification Code	000000000000000	
+			P043 -PD- Card Acceptor Name-Location		
+				#043.01 - Card Acceptor Name	TOK ACT                  	
+				#043.02 - City Name	Paris        	
+				#043.03 - Country Code	FR	
+			P049 - Currency Code, Transaction	978	
+			P051 - Currency Code, Cardholder Billing	978	
+			P060 -PD- Additional POS Information		
+					#060.01 - Terminal Type	0	
+					#060.02 - Terminal Entry Capability	0	
+					#060.03 - Chip Condition Code	0	
+					#060.04 - Special Condition Indicator-Existing Debt	0	
+					#060.05 - Merchant Group Indicator	00	
+					#060.06 - Transaction Indicator	4	
+					#060.07 - Card Authentication Reliability Indicator	0	
+					#060.08 - Mail-Phone-Electronic Commerce and US Bill Payment Indicator	00	
+					#060.09 - Cardholder ID Method Indicator	0	
+			P062 -PD- Custom Payment Service Fields		
+						#062 - BitMap Format		
+							#062.00 - CPS Fields Bit Map		
+							#062.02 - Transaction Identifier	126203620120001	
+			P063 -PD- SMS or VIP Private-Use Fields		
+						#063 - BI - Private-Use Fields content		
+							#063.00 - Bit Map		
+							#063.01 - Network ID	0002	
+							#063.03 - Message Reason Code	3700	
+			S120 - Auxiliary Transaction Data		
+						#120 - Auxiliary Transaction Data - TLV Format		
+			S123 -PD- Verification Data		
+					#123 - Verification & Token Data - Usage 2 - TLV Format		
+							#123 - Dataset ID 68 - Token Data		
+									#123.68.03 - Token requester ID	40010030273	
+									#123.68.05 - Token Reference ID	toktok78888240707112800000288535	
+									#123.68.0B - PAN Reference ID	toktok78888240707112800000288535	
+									#123.68.06 - Token Expiration Date	2906	
+									#123.68.07 - Token Type	02	
+									#123.68.08 - Token Status	A	
+			S125 -PD- Supporting Information		
+						#125 - Usage 2 Supporting Information (TLV format)		
+							#125 - Usage 2; Token device DataSet 01		
+									#125.02.01.01 - Device Type	01	
+									#125.02.01.02 - Device Language Code	FRA	
+									#125.02.01.03 - Device ID	device id001 fsgrs etgt tryrty ney rey yt eefin1	
+									#125.02.01.04 - Device Number	003361234567890	
+									#125.02.01.05 - Device Name	Lilou	
+									#125.02.01.06 - Device Location	cap cergy	
+									#125.02.01.07 - IP Address	255.255.255.255	
+							#125 - Usage 2; Wallet provider DataSet 02		
+									#125.02.02.03 - Wallet Provider Risk Assessement	0	
+									#125.02.02.04 - Wallet Provider Risk Assessement Version	0	
+									#125.02.02.05 - Wallet Provider Device Score	00	
+									#125.02.02.06 - Wallet Provider Acount Score	00	
+									#125.02.02.07 - Wallet Provider Reason Codes	01	
+									#125.02.02.08 - PAN Source	03	
+									#125.02.02.09 - Wallet Account ID	01	
+									#125.02.02.0A - Wallet Account Email Adress	AE5F4675A78059F7E3F045C83C54C592C564CBA517851055A736A41220792511	
+			S126 -PD- Visa Private-Use Fields		
+					#126 -Sub-fields		
+						#126.00 - Bit map		
+						#126.10 - CVV2 Authorization Request Data		
+							#126.10.01 - Presence Indicator	0	
+							#126.10.02 - Response Type	0	
+							#126.10.03 - CVV2 Value	    	

@@ -1,0 +1,4 @@
+Favori;Libellé;PAN;Carte encodée;DateExp;Environnement;Code banque;Nom de la banque
+1;Visa Débit PNH;4111111111111111;;2912;PNH;001;Banque de test A
+1;Carte PNR encodée;;ABCDEF0123456789ABCDEF0123456789;3006;PNR;002;Banque de test B
+0;Mastercard PNR en clair;5555555555554444;;3006;PNR;002;Banque de test B

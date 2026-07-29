@@ -476,32 +476,31 @@ def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple
         return final_frame, metadata
 
     # Le dictionnaire courant ne décrit pas encore tous les champs du 0620.
-    # On remplace donc ses valeurs modèles connues, sans dépendre du parseur.
+    # Pour cette trame, les champs variables sont remplacés à leurs positions
+    # exactes dans le payload BASE I afin d'éviter toute fausse correspondance.
     if template_name == "TNR CREATE ACTIVE":
+        # Offsets dans le payload, donc après le préfixe TCP de 4 octets :
+        # DE2  = octets 41..48
+        # DE7  = octets 49..53
+        # DE14 = octets 57..58
+        if len(payload_mutable) < 61:
+            raise ValueError("La trame modèle TNR est trop courte.")
+
         if pan:
-            _replace_unique_bytes(
-                payload_mutable,
-                digits_to_bcd("4978902609437147"),
-                digits_to_bcd(pan),
-                "PAN du TNR",
-            )
-        _replace_unique_bytes(
-            payload_mutable,
-            digits_to_bcd("0729135435"),
-            digits_to_bcd(now_de7),
-            "DE7 du TNR",
-        )
-        # La date 0407 de ce modèle correspond à la date d'expiration.
+            payload_mutable[41:49] = digits_to_bcd(pan)
+
+        payload_mutable[49:54] = digits_to_bcd(now_de7)
+
         if expiry_yymm:
-            _replace_unique_bytes(
-                payload_mutable,
-                digits_to_bcd("0407"),
-                digits_to_bcd(expiry_yymm),
-                "date d'expiration du TNR",
-            )
-        payload_mutable[3:5] = len(payload_mutable).to_bytes(2, "big")
-        final_frame = make_tcp_frame(bytes(payload_mutable))
-        return final_frame, {
+            payload_mutable[57:59] = digits_to_bcd(expiry_yymm)
+
+        # Le modèle KaNest fourni annonce 0x019B dans le préfixe TCP et H04.
+        # On conserve strictement ces longueurs au lieu de les recalculer en
+        # 0x019C, valeur qui faisait rejeter le 0620 par le serveur.
+        final_frame = bytearray(frame)
+        final_frame[4:] = payload_mutable
+
+        return bytes(final_frame), {
             "name": template_name,
             "mti": "0620",
             "pan": pan or "absent",

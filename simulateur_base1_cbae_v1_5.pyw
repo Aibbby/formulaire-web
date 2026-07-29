@@ -328,7 +328,7 @@ import threading
 
 APP_NAME = "Simulateur BASE I & CBAE"
 APP_SUBTITLE = "Parseur de messages ISO8583"
-APP_VERSION = "1.6"
+APP_VERSION = "1.7.8"
 
 DEFAULT_HOST = "NXLIASM012"
 DEFAULT_PORT = 22201
@@ -380,10 +380,44 @@ F0 F0 40 40 40 40
 
 
 
+
+
+MESSAGE_REASON_CODES = {
+    "Token create": "3700",
+    "Token deactivated": "3701",
+    "Token suspend": "3702",
+    "Token resume": "3703",
+    "Device prov result": "3711",
+    "OTP verification result": "3712",
+    "Call centre activation result": "3713",
+    "Mobile banking app activation": "3714",
+    "Token expiry update": "3716",
+    "3DS browser activation": "3717",
+    "PAN expiry update": "3720",
+    "PAN update": "3721",
+}
+
+TOKEN_REQUESTER_IDS = {
+    "Apple Pay": "40010030273",
+    "Samsung Pay": "40010043095",
+    "Google Pay": "40010075001",
+    "Click To Pay": "40010075338",
+    "Garmin Pay": "40010069887",
+    "Swatch Pay": "40010081763",
+}
+
+TOKEN_STATUSES = {
+    "Actif": "A",
+    "Inactif": "I",
+    "Suspendu": "S",
+    "Désactivé": "D",
+    "Pending": "P",
+}
+
 MESSAGE_TEMPLATES = {
     "TAR MAX": bytes.fromhex("01E7000016010201E700000000000000000000000000000000000100F66664810860A016000000000000012C104990093581497111000000000000000000000000000000072916051305655957005006261007076012025000005106497572F6F2F1F0F1F6F0F0F5F0F0F6F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0E3D6D240C1C3E3404040404040404040404040404040404040D7819989A24040404040404040C6D90978097806000000400000104000000000000000012621061514000107A000000002370000006168005E030BF4F0F0F1F0F0F3F0F2F7F30520A39692A39692F7F8F8F8F8F2F4F0F7F0F7F1F1F2F8F0F0F0F0F0F2F8F8F5F3F50B20A39692A39692F7F8F8F8F8F2F4F0F7F0F7F1F1F2F8F0F0F0F0F0F2F8F8F5F3F50604F2F9F0F60702F0F20801C1B101006F0102F0F10203C6D9C103308485A5898385408984F0F0F14086A28799A24085A387A340A399A899A3A8409585A8409985A840A8A3408585868995F1040FF0F0F3F3F6F1F2F3F4F5F6F7F8F9F00505D3899396A406098381974083859987A8070FF2F5F54BF2F5F54BF2F5F54BF2F5F502003C0301F00401F00502F0F00602F0F00702F0F10802F0F30902F0F10A20AE5F4675A78059F7E3F045C83C54C592C564CBA517851055A736A412207925110E0040000000000000F0F040404040"),
     "TAR MIN": bytes.fromhex("010D0000160102010D00000000000000000000000000000000000100F66664810860A0160000000000000024104990093581497111000000000000000000000000000000072916071105655957005007261007076012025000005106497572F6F2F1F0F1F6F0F0F5F0F0F7F1F2F3F4F5F6F7F8F9404040404040E3D6D240C1C3E3404040404040404040404040404040404040D7819989A24040404040404040C6D90978097806000000400000104000000000000000012621061631000207A00000000237003B680038030BF4F0F0F1F0F0F3F0F2F7F30512F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F4F5F60B12F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F4F5F60801C10E0040000000000000F0F040404040"),
-    "TNR CREATE ACTIVE": bytes.fromhex("019B0000160102019B00000000000000000000000000000000000620C22600008A010016040000000800002A10497890260943714707291354350050002804070700F6F2F1F0F1F3F0F0F5F0F0F0F0F0115CE4958696999481A3A3858440A385A7A306000000000000104000000000000000012621053676000207A0000000023700089002D3F3756800720113F8F8F8F4F9F7F8F7F4F1F3F2F3F1F0F0F0F0F0030BF4F0F0F1F0F0F3F0F2F7F30518C4D5C9E3C8C5F3F0F2F4F3F5F1F4F8F3F3F2F4F5F4F7F9F70604F3F0F0F60801C10B12F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F3F2F00702F0F28606012345678901810BF1F2F3F4F5F6F7F8F9F0F1770100540102F0F102038595870318C485A589838540E28583A4998540C59385948595A340C9C4040FF0F0F0F0F0F0F0F0F0F0F0F0F0F0F0050BD3899396A44040404040400600070FF2F5F54BF2F5F54BF2F5F54BF2F5F502001D0301F00401F00502F0F00602F0F00702F0F10802F0F10902F0F10A0101296A0026DF21084040404040404040DF240000DF250000DF260000DF270001D3DF280001E8DF290001E8"),
+    "TNA CREATE ACTIVE": bytes.fromhex("019B0000160102019B00000000000000000000000000000000000620C22600008A010016040000000800002A10497890260943714707291354350050002804070700F6F2F1F0F1F3F0F0F5F0F0F0F0F0115CE4958696999481A3A3858440A385A7A306000000000000104000000000000000012621053676000207A0000000023700089002D3F3756800720113F8F8F8F4F9F7F8F7F4F1F3F2F3F1F0F0F0F0F0030BF4F0F0F1F0F0F3F0F2F7F30518C4D5C9E3C8C5F3F0F2F4F3F5F1F4F8F3F3F2F4F5F4F7F9F70604F3F0F0F60801C10B12F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F3F2F00702F0F28606012345678901810BF1F2F3F4F5F6F7F8F9F0F1770100540102F0F102038595870318C485A589838540E28583A4998540C59385948595A340C9C4040FF0F0F0F0F0F0F0F0F0F0F0F0F0F0F0050BD3899396A44040404040400600070FF2F5F54BF2F5F54BF2F5F54BF2F5F502001D0301F00401F00502F0F00602F0F00702F0F10802F0F10902F0F10A0101296A0026DF21084040404040404040DF240000DF250000DF260000DF270001D3DF280001E8DF290001E8"),
 }
 
 def digits_to_bcd(value: str) -> bytes:
@@ -421,7 +455,16 @@ def _replace_unique_bytes(data: bytearray, old: bytes, new: bytes, label: str) -
     data[first:first + len(old)] = new
 
 
-def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple[bytes, dict]:
+def build_message_frame(
+    template_name: str,
+    pan: str,
+    expiry_yymm: str,
+    message_reason_code: str = "3700",
+    token_requester_id: str = "40010030273",
+    token_reference_id: str = "DNITHE302435148332454797",
+    pan_reference_id: str = "888824070711288320",
+    token_status: str = "A",
+) -> tuple[bytes, dict]:
     if template_name not in MESSAGE_TEMPLATES:
         raise ValueError(f"Modèle de message inconnu : {template_name}")
 
@@ -434,6 +477,17 @@ def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple
         raise ValueError("La date d'expiration doit être au format AAMM, par exemple 2906.")
     if expiry_yymm and not 1 <= int(expiry_yymm[2:4]) <= 12:
         raise ValueError("Le mois d'expiration doit être compris entre 01 et 12.")
+
+    if not re.fullmatch(r"\d{4}", message_reason_code):
+        raise ValueError("Message Reason Code doit contenir exactement 4 chiffres.")
+    if not re.fullmatch(r"\d{11}", token_requester_id):
+        raise ValueError("Token Requester ID doit contenir exactement 11 chiffres.")
+    if len(token_reference_id) != 24:
+        raise ValueError("Token Reference ID doit contenir exactement 24 caractères.")
+    if len(pan_reference_id) != 18 or not pan_reference_id.isdigit():
+        raise ValueError("PAN Reference ID doit contenir exactement 18 chiffres.")
+    if token_status not in {"A", "I", "S", "D", "P"}:
+        raise ValueError("Statut du token invalide.")
 
     frame = bytearray(MESSAGE_TEMPLATES[template_name])
     if len(frame) < 8 or frame[4:7] != b"\x16\x01\x02":
@@ -462,6 +516,52 @@ def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple
                 )
             payload_mutable[field_start:field_end] = replacement
 
+        # Paramètres token présents dans les modèles 0100 TAR.
+        # Les références et le statut ne sont modifiés que si le modèle les contient.
+        old_reason = bytes.fromhex("3700")
+        if payload_mutable.count(old_reason) == 1:
+            _replace_unique_bytes(
+                payload_mutable,
+                old_reason,
+                digits_to_bcd(message_reason_code),
+                "DE63.03",
+            )
+
+        old_requester = "40010030273".encode("cp037")
+        if payload_mutable.count(old_requester) == 1:
+            _replace_unique_bytes(
+                payload_mutable,
+                old_requester,
+                token_requester_id.encode("cp037"),
+                "DE123.68.03",
+            )
+
+        old_token_reference = "DNITHE302435148332454797".encode("cp037")
+        if payload_mutable.count(old_token_reference) == 1:
+            _replace_unique_bytes(
+                payload_mutable,
+                old_token_reference,
+                token_reference_id.encode("cp037"),
+                "DE123.68.05",
+            )
+
+        old_pan_reference = "888824070711288320".encode("cp037")
+        if payload_mutable.count(old_pan_reference) == 1:
+            _replace_unique_bytes(
+                payload_mutable,
+                old_pan_reference,
+                pan_reference_id.encode("cp037"),
+                "DE123.68.0B",
+            )
+
+        # Le statut A n'est remplacé que dans le dataset token complet afin
+        # d'éviter de modifier un autre caractère EBCDIC A du message.
+        if payload_mutable.count(old_token_reference) == 1:
+            token_ref_pos = payload_mutable.find(token_reference_id.encode("cp037"))
+            status_pos = token_ref_pos + len(token_reference_id.encode("cp037")) + 3
+            if 0 <= status_pos < len(payload_mutable) and payload_mutable[status_pos] == 0xC1:
+                payload_mutable[status_pos] = token_status.encode("cp037")[0]
+
         payload_mutable[3:5] = len(payload_mutable).to_bytes(2, "big")
         final_frame = make_tcp_frame(bytes(payload_mutable))
         final_parsed = parse_base1(final_frame[4:])
@@ -478,13 +578,13 @@ def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple
     # Le dictionnaire courant ne décrit pas encore tous les champs du 0620.
     # Pour cette trame, les champs variables sont remplacés à leurs positions
     # exactes dans le payload BASE I afin d'éviter toute fausse correspondance.
-    if template_name == "TNR CREATE ACTIVE":
+    if template_name == "TNA CREATE ACTIVE":
         # Offsets dans le payload, donc après le préfixe TCP de 4 octets :
         # DE2  = octets 41..48
         # DE7  = octets 49..53
         # DE14 = octets 57..58
         if len(payload_mutable) < 61:
-            raise ValueError("La trame modèle TNR est trop courte.")
+            raise ValueError("La trame modèle TNA est trop courte.")
 
         if pan:
             payload_mutable[41:49] = digits_to_bcd(pan)
@@ -493,6 +593,33 @@ def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple
 
         if expiry_yymm:
             payload_mutable[57:59] = digits_to_bcd(expiry_yymm)
+
+        # DE63.03 - Message Reason Code (n4 compacté BCD).
+        _replace_unique_bytes(payload_mutable, bytes.fromhex("3700"), digits_to_bcd(message_reason_code), "DE63.03")
+
+        # DE123.68.03 - Token Requester ID (11 caractères EBCDIC).
+        old_requester = "40010030273".encode("cp037")
+        new_requester = token_requester_id.encode("cp037")
+        _replace_unique_bytes(payload_mutable, old_requester, new_requester, "DE123.68.03")
+
+        # DE123.68.05 - Token Reference ID (24 caractères EBCDIC).
+        _replace_unique_bytes(
+            payload_mutable,
+            "DNITHE302435148332454797".encode("cp037"),
+            token_reference_id.encode("cp037"),
+            "DE123.68.05",
+        )
+
+        # DE123.68.08 - Token Status (1 caractère EBCDIC).
+        _replace_unique_bytes(payload_mutable, b"\xC1", token_status.encode("cp037"), "DE123.68.08")
+
+        # DE123.68.0B - PAN Reference ID (18 caractères EBCDIC).
+        _replace_unique_bytes(
+            payload_mutable,
+            "888824070711288320".encode("cp037"),
+            pan_reference_id.encode("cp037"),
+            "DE123.68.0B",
+        )
 
         # Le modèle KaNest fourni annonce 0x019B dans le préfixe TCP et H04.
         # On conserve strictement ces longueurs au lieu de les recalculer en
@@ -506,6 +633,11 @@ def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple
             "pan": pan or "absent",
             "de7": now_de7,
             "expiry": expiry_yymm or "absent",
+            "message_reason_code": message_reason_code,
+            "token_requester_id": token_requester_id,
+            "token_reference_id": token_reference_id,
+            "pan_reference_id": pan_reference_id,
+            "token_status": token_status,
         }
 
     raise ValueError(f"Aucune règle de modification définie pour {template_name}.")
@@ -668,6 +800,11 @@ class AppSimulateurBase1(tk.Tk):
         self.pan_var = tk.StringVar()
         self.expiry_var = tk.StringVar()
         self.message_type_var = tk.StringVar(value="TAR MAX")
+        self.message_reason_var = tk.StringVar(value="Token create")
+        self.token_requester_var = tk.StringVar(value="Apple Pay")
+        self.token_reference_var = tk.StringVar(value="DNITHE302435148332454797")
+        self.pan_reference_var = tk.StringVar(value="888824070711288320")
+        self.token_status_var = tk.StringVar(value="Actif")
         self.status_var = tk.StringVar(value="● Déconnecté | BASE I")
         self.counter_var = tk.StringVar(
             value="RX : 0800=0  0110=0    |    TX : 0810=0  0100=0"
@@ -962,6 +1099,7 @@ class AppSimulateurBase1(tk.Tk):
             width=22,
         )
         self.message_type_combo.grid(row=0, column=6, padx=(0, 8), sticky="w")
+        self.message_type_combo.bind("<<ComboboxSelected>>", self.on_message_type_changed)
 
         self.send_message_button = tk.Button(
             authorization,
@@ -981,6 +1119,55 @@ class AppSimulateurBase1(tk.Tk):
             pady=6,
         )
         self.send_message_button.grid(row=0, column=7, padx=5)
+
+        self.tnr_options_frame = ttk.LabelFrame(
+            self.server_tab, text="Paramètres messages 0100 / 0620", padding=10
+        )
+
+        ttk.Label(self.tnr_options_frame, text="Message Reason Code :").grid(row=0, column=0, sticky="w")
+        ttk.Combobox(
+            self.tnr_options_frame,
+            textvariable=self.message_reason_var,
+            values=list(MESSAGE_REASON_CODES.keys()),
+            state="readonly",
+            width=30,
+        ).grid(row=0, column=1, padx=(5, 18), sticky="w")
+
+        ttk.Label(self.tnr_options_frame, text="Token Requester ID :").grid(row=0, column=2, sticky="w")
+        ttk.Combobox(
+            self.tnr_options_frame,
+            textvariable=self.token_requester_var,
+            values=list(TOKEN_REQUESTER_IDS.keys()),
+            state="readonly",
+            width=24,
+        ).grid(row=0, column=3, padx=(5, 18), sticky="w")
+
+        ttk.Label(self.tnr_options_frame, text="Statut :").grid(row=0, column=4, sticky="w")
+        ttk.Combobox(
+            self.tnr_options_frame,
+            textvariable=self.token_status_var,
+            values=list(TOKEN_STATUSES.keys()),
+            state="readonly",
+            width=13,
+        ).grid(row=0, column=5, padx=(5, 0), sticky="w")
+
+        ttk.Label(self.tnr_options_frame, text="Token Reference ID :").grid(row=1, column=0, pady=(10, 0), sticky="w")
+        tk.Entry(
+            self.tnr_options_frame,
+            textvariable=self.token_reference_var,
+            width=32,
+            font=("Consolas", 10),
+        ).grid(row=1, column=1, padx=(5, 18), pady=(10, 0), sticky="w")
+
+        ttk.Label(self.tnr_options_frame, text="PAN Reference ID :").grid(row=1, column=2, pady=(10, 0), sticky="w")
+        tk.Entry(
+            self.tnr_options_frame,
+            textvariable=self.pan_reference_var,
+            width=25,
+            font=("Consolas", 10),
+        ).grid(row=1, column=3, padx=(5, 18), pady=(10, 0), sticky="w")
+
+        self.on_message_type_changed()
 
         console_frame = ttk.LabelFrame(self.server_tab, text="Journal réseau", padding=5)
         console_frame.pack(fill="both", expand=True)
@@ -2392,6 +2579,15 @@ class AppSimulateurBase1(tk.Tk):
         populate()
         search_entry.focus_set()
 
+    def on_message_type_changed(self, _event=None) -> None:
+        # Les paramètres restent disponibles pour les messages 0100 et 0620.
+        if not self.tnr_options_frame.winfo_ismapped():
+            self.tnr_options_frame.pack(
+                fill="x",
+                pady=(0, 10),
+                before=self.server_tab.winfo_children()[-1],
+            )
+
     def trigger_send_message(self) -> None:
         if self.client_socket is None:
             messagebox.showerror("Non connecté", "Connectez-vous au serveur avant l'envoi.")
@@ -2402,6 +2598,11 @@ class AppSimulateurBase1(tk.Tk):
                 self.message_type_var.get(),
                 self.pan_var.get(),
                 self.expiry_var.get(),
+                MESSAGE_REASON_CODES[self.message_reason_var.get()],
+                TOKEN_REQUESTER_IDS[self.token_requester_var.get()],
+                self.token_reference_var.get().strip(),
+                self.pan_reference_var.get().strip(),
+                TOKEN_STATUSES[self.token_status_var.get()],
             )
         except Exception as exc:
             messagebox.showerror("Trame invalide", str(exc))
@@ -2431,6 +2632,10 @@ class AppSimulateurBase1(tk.Tk):
                 details.append(f"DE7={metadata['de7']}")
             if metadata["expiry"] != "absent":
                 details.append(f"expiration={metadata['expiry']}")
+            if mti == "0620":
+                details.append(f"DE63.03={metadata['message_reason_code']}")
+                details.append(f"DE123.68.03={metadata['token_requester_id']}")
+                details.append(f"DE123.68.08={metadata['token_status']}")
 
             self.log(
                 ", ".join(details)

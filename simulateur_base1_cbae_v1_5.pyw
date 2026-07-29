@@ -2581,12 +2581,11 @@ class AppSimulateurBase1(tk.Tk):
 
     def on_message_type_changed(self, _event=None) -> None:
         # Les paramètres restent disponibles pour les messages 0100 et 0620.
+        # Ne pas utiliser ``before`` ici : lors de l'initialisation, la console
+        # n'existe pas encore et le dernier enfant peut être le cadre lui-même,
+        # ce qui provoque une erreur Tcl et empêche le lancement de l'application.
         if not self.tnr_options_frame.winfo_ismapped():
-            self.tnr_options_frame.pack(
-                fill="x",
-                pady=(0, 10),
-                before=self.server_tab.winfo_children()[-1],
-            )
+            self.tnr_options_frame.pack(fill="x", pady=(0, 10))
 
     def trigger_send_message(self) -> None:
         if self.client_socket is None:

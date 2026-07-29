@@ -2340,23 +2340,15 @@ class AppSimulateurBase1(tk.Tk):
     # --------------------------------------------------------
 
     def normalize_parser_payload(self, raw: bytes) -> bytes:
-        if raw.startswith(b"\x16\x01\x02"):
-            return raw
-
-        if len(raw) >= 8 and raw[4:7] == b"\x16\x01\x02":
-            announced = int.from_bytes(raw[0:2], "big")
-            payload = raw[4:]
-            if announced != len(payload):
-                raise ValueError(
-                    f"Le préfixe TCP annonce {announced} octets, "
-                    f"mais le payload en contient {len(payload)}."
-                )
-            return payload
-
-        raise ValueError(
-            "Début de trame non reconnu. Le payload doit commencer par 16 01 02, "
-            "ou être précédé du préfixe TCP de 4 octets."
-        )
+        idx = raw.find(b"\x16\x01\x02")
+        if idx >= 0:
+            if idx >= 4:
+                announced = int.from_bytes(raw[idx-4:idx-2], "big")
+                payload = raw[idx:]
+                if announced == len(payload):
+                    return payload
+            return raw[idx:]
+        raise ValueError("Aucune trame BASE I (16 01 02) trouvée dans les données collées.")
 
     def paste_parser(self) -> None:
         try:

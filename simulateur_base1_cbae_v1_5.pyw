@@ -378,6 +378,14 @@ F0 F0 40 40 40 40
 """)
 
 
+
+
+MESSAGE_TEMPLATES = {
+    "TAR MAX": bytes.fromhex("01E7000016010201E700000000000000000000000000000000000100F66664810860A016000000000000012C104990093581497111000000000000000000000000000000072916051305655957005006261007076012025000005106497572F6F2F1F0F1F6F0F0F5F0F0F6F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0E3D6D240C1C3E3404040404040404040404040404040404040D7819989A24040404040404040C6D90978097806000000400000104000000000000000012621061514000107A000000002370000006168005E030BF4F0F0F1F0F0F3F0F2F7F30520A39692A39692F7F8F8F8F8F2F4F0F7F0F7F1F1F2F8F0F0F0F0F0F2F8F8F5F3F50B20A39692A39692F7F8F8F8F8F2F4F0F7F0F7F1F1F2F8F0F0F0F0F0F2F8F8F5F3F50604F2F9F0F60702F0F20801C1B101006F0102F0F10203C6D9C103308485A5898385408984F0F0F14086A28799A24085A387A340A399A899A3A8409585A8409985A840A8A3408585868995F1040FF0F0F3F3F6F1F2F3F4F5F6F7F8F9F00505D3899396A406098381974083859987A8070FF2F5F54BF2F5F54BF2F5F54BF2F5F502003C0301F00401F00502F0F00602F0F00702F0F10802F0F30902F0F10A20AE5F4675A78059F7E3F045C83C54C592C564CBA517851055A736A412207925110E0040000000000000F0F040404040"),
+    "TAR MIN": bytes.fromhex("010D0000160102010D00000000000000000000000000000000000100F66664810860A0160000000000000024104990093581497111000000000000000000000000000000072916071105655957005007261007076012025000005106497572F6F2F1F0F1F6F0F0F5F0F0F7F1F2F3F4F5F6F7F8F9404040404040E3D6D240C1C3E3404040404040404040404040404040404040D7819989A24040404040404040C6D90978097806000000400000104000000000000000012621061631000207A00000000237003B680038030BF4F0F0F1F0F0F3F0F2F7F30512F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F4F5F60B12F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F4F5F60801C10E0040000000000000F0F040404040"),
+    "TNR CREATE ACTIVE": bytes.fromhex("019B0000160102019B00000000000000000000000000000000000620C22600008A010016040000000800002A10497890260943714707291354350050002804070700F6F2F1F0F1F3F0F0F5F0F0F0F0F0115CE4958696999481A3A3858440A385A7A306000000000000104000000000000000012621053676000207A0000000023700089002D3F3756800720113F8F8F8F8F4F9F7F8F7F4F1F3F2F3F1F0F0F0F0F0030BF4F0F0F1F0F0F3F0F2F7F30518C4D5C9E3C8C5F3F0F2F4F3F5F1F4F8F3F3F2F4F5F4F7F9F70604F3F0F0F60801C10B12F8F8F8F8F2F4F0F7F0F7F1F1F2F8F8F3F2F00702F0F28606012345678901810BF1F2F3F4F5F6F7F8F9F0F1770100540102F0F102038595870318C485A589838540E28583A4998540C59385948595A340C9C4040FF0F0F0F0F0F0F0F0F0F0F0F0F0F0F0050BD3899396A44040404040400600070FF2F5F54BF2F5F54BF2F5F54BF2F5F502001D0301F00401F00502F0F00602F0F00702F0F10802F0F10902F0F10A0101296A0026DF21084040404040404040DF240000DF250000DF260000DF270001D3DF280001E8DF290001E8"),
+}
+
 def digits_to_bcd(value: str) -> bytes:
     if not value.isdigit():
         raise ValueError("La valeur BCD doit contenir uniquement des chiffres.")
@@ -402,50 +410,106 @@ def field_raw_bounds(parsed: dict, field_no: int) -> tuple[int, int]:
     raise ValueError(f"Le champ DE{field_no:03d} n'est pas présent dans la trame modèle.")
 
 
-def build_0100_frame(pan: str, expiry_yymm: str) -> bytes:
+def _replace_unique_bytes(data: bytearray, old: bytes, new: bytes, label: str) -> None:
+    first = data.find(old)
+    if first < 0:
+        raise ValueError(f"Valeur modèle introuvable pour {label}.")
+    if data.find(old, first + 1) >= 0:
+        raise ValueError(f"Valeur modèle non unique pour {label}.")
+    if len(old) != len(new):
+        raise ValueError(f"Longueur incompatible pour {label}.")
+    data[first:first + len(old)] = new
+
+
+def build_message_frame(template_name: str, pan: str, expiry_yymm: str) -> tuple[bytes, dict]:
+    if template_name not in MESSAGE_TEMPLATES:
+        raise ValueError(f"Modèle de message inconnu : {template_name}")
+
     pan = re.sub(r"\s+", "", pan)
     expiry_yymm = re.sub(r"[\s/.-]+", "", expiry_yymm)
 
-    if not re.fullmatch(r"\d{16}", pan):
-        raise ValueError(
-            "Pour cette première version, le PAN doit contenir exactement 16 chiffres."
+    if pan and not re.fullmatch(r"\d{16}", pan):
+        raise ValueError("Le PAN doit contenir exactement 16 chiffres.")
+    if expiry_yymm and not re.fullmatch(r"\d{4}", expiry_yymm):
+        raise ValueError("La date d'expiration doit être au format AAMM, par exemple 2906.")
+    if expiry_yymm and not 1 <= int(expiry_yymm[2:4]) <= 12:
+        raise ValueError("Le mois d'expiration doit être compris entre 01 et 12.")
+
+    frame = bytearray(MESSAGE_TEMPLATES[template_name])
+    if len(frame) < 8 or frame[4:7] != b"\x16\x01\x02":
+        raise ValueError("La trame modèle ne contient pas un message BASE I valide.")
+
+    payload_mutable = bytearray(frame[4:])
+    now_de7 = datetime.datetime.now().strftime("%m%d%H%M%S")
+
+    # Les TAR sont modifiés à partir des positions ISO calculées par le parseur.
+    if template_name in ("TAR MAX", "TAR MIN"):
+        parsed = parse_base1(bytes(payload_mutable))
+        present_fields = {row["field"] for row in parsed["rows"]}
+        replacements = {}
+        if 2 in present_fields and pan:
+            replacements[2] = digits_to_bcd(pan)
+        if 7 in present_fields:
+            replacements[7] = digits_to_bcd(now_de7)
+        if 14 in present_fields and expiry_yymm:
+            replacements[14] = digits_to_bcd(expiry_yymm)
+
+        for field_no, replacement in replacements.items():
+            field_start, field_end = field_raw_bounds(parsed, field_no)
+            if len(replacement) != field_end - field_start:
+                raise ValueError(
+                    f"La valeur calculée pour DE{field_no:03d} ne correspond pas à la longueur du modèle."
+                )
+            payload_mutable[field_start:field_end] = replacement
+
+        payload_mutable[3:5] = len(payload_mutable).to_bytes(2, "big")
+        final_frame = make_tcp_frame(bytes(payload_mutable))
+        final_parsed = parse_base1(final_frame[4:])
+        values = {row["field"]: row["value"] for row in final_parsed["rows"]}
+        metadata = {
+            "name": template_name,
+            "mti": final_parsed["mti"],
+            "pan": values.get(2, "absent"),
+            "de7": values.get(7, "absent"),
+            "expiry": values.get(14, "absent"),
+        }
+        return final_frame, metadata
+
+    # Le dictionnaire courant ne décrit pas encore tous les champs du 0620.
+    # On remplace donc ses valeurs modèles connues, sans dépendre du parseur.
+    if template_name == "TNR CREATE ACTIVE":
+        if pan:
+            _replace_unique_bytes(
+                payload_mutable,
+                digits_to_bcd("4978902609437147"),
+                digits_to_bcd(pan),
+                "PAN du TNR",
+            )
+        _replace_unique_bytes(
+            payload_mutable,
+            digits_to_bcd("0729135435"),
+            digits_to_bcd(now_de7),
+            "DE7 du TNR",
         )
-    if not re.fullmatch(r"\d{4}", expiry_yymm):
-        raise ValueError("La date d'expiration doit être saisie au format AAMM, par exemple 2906.")
+        # La date 0407 de ce modèle correspond à la date d'expiration.
+        if expiry_yymm:
+            _replace_unique_bytes(
+                payload_mutable,
+                digits_to_bcd("0407"),
+                digits_to_bcd(expiry_yymm),
+                "date d'expiration du TNR",
+            )
+        payload_mutable[3:5] = len(payload_mutable).to_bytes(2, "big")
+        final_frame = make_tcp_frame(bytes(payload_mutable))
+        return final_frame, {
+            "name": template_name,
+            "mti": "0620",
+            "pan": pan or "absent",
+            "de7": now_de7,
+            "expiry": expiry_yymm or "absent",
+        }
 
-    month = int(expiry_yymm[2:4])
-    if month < 1 or month > 12:
-        raise ValueError("Le mois de la date d'expiration doit être compris entre 01 et 12.")
-
-    frame = bytearray(TEMPLATE_0100_FRAME)
-    payload = bytes(frame[4:])
-    parsed = parse_base1(payload)
-
-    pan_start, pan_end = field_raw_bounds(parsed, 2)
-    date_time_start, date_time_end = field_raw_bounds(parsed, 7)
-    exp_start, exp_end = field_raw_bounds(parsed, 14)
-
-    pan_bcd = digits_to_bcd(pan)
-    # DE7 ISO 8583 : MMJJhhmmss, calculé au moment exact de l'envoi.
-    transmission_date_time = datetime.datetime.now().strftime("%m%d%H%M%S")
-    transmission_date_time_bcd = digits_to_bcd(transmission_date_time)
-    expiry_bcd = digits_to_bcd(expiry_yymm)
-
-    if len(pan_bcd) != pan_end - pan_start:
-        raise ValueError("La longueur du PAN ne correspond pas à celle de la trame modèle.")
-    if len(transmission_date_time_bcd) != date_time_end - date_time_start:
-        raise ValueError("La longueur du champ 7 est incorrecte dans la trame modèle.")
-    if len(expiry_bcd) != exp_end - exp_start:
-        raise ValueError("La longueur de la date d'expiration est incorrecte.")
-
-    payload_mutable = bytearray(payload)
-    payload_mutable[pan_start:pan_end] = pan_bcd
-    payload_mutable[date_time_start:date_time_end] = transmission_date_time_bcd
-    payload_mutable[exp_start:exp_end] = expiry_bcd
-
-    # H04 est recalculé même si la longueur ne change pas.
-    payload_mutable[3:5] = len(payload_mutable).to_bytes(2, "big")
-    return make_tcp_frame(bytes(payload_mutable))
+    raise ValueError(f"Aucune règle de modification définie pour {template_name}.")
 
 
 def get_field_raw(parsed: dict, field_no: int) -> bytes:
@@ -588,6 +652,7 @@ class AppSimulateurBase1(tk.Tk):
         self.count_0800 = 0
         self.count_0810 = 0
         self.count_0100 = 0
+        self.count_0620 = 0
         self.count_0110 = 0
 
         self.call_points = self.load_call_points()
@@ -603,6 +668,7 @@ class AppSimulateurBase1(tk.Tk):
 
         self.pan_var = tk.StringVar()
         self.expiry_var = tk.StringVar()
+        self.message_type_var = tk.StringVar(value="TAR MAX")
         self.status_var = tk.StringVar(value="● Déconnecté | BASE I")
         self.counter_var = tk.StringVar(
             value="RX : 0800=0  0110=0    |    TX : 0810=0  0100=0"
@@ -683,7 +749,7 @@ class AppSimulateurBase1(tk.Tk):
             font=("Segoe UI", 9, "bold"),
             relief="flat",
         )
-        style.map("Treeview", background=[("selected", "#CCE4FA")], foreground=[("selected","#000000")])
+        style.map("Treeview", background=[("selected", "#CCE4FA")])
         style.configure("TEntry", fieldbackground="#FFFFFF")
         style.configure("TCombobox", fieldbackground="#FFFFFF")
         style.configure(
@@ -886,10 +952,22 @@ class AppSimulateurBase1(tk.Tk):
         )
         self.choose_card_button.grid(row=0, column=4, padx=(0, 8))
 
-        self.send_0100_button = tk.Button(
+        ttk.Label(authorization, text="Message :").grid(
+            row=0, column=5, padx=(6, 5), sticky="w"
+        )
+        self.message_type_combo = ttk.Combobox(
             authorization,
-            text="Envoyer 0100",
-            command=self.trigger_send_0100,
+            textvariable=self.message_type_var,
+            values=list(MESSAGE_TEMPLATES.keys()),
+            state="readonly",
+            width=22,
+        )
+        self.message_type_combo.grid(row=0, column=6, padx=(0, 8), sticky="w")
+
+        self.send_message_button = tk.Button(
+            authorization,
+            text="Envoyer",
+            command=self.trigger_send_message,
             state="disabled",
             bg="#F8FAFC",
             fg="#1F2937",
@@ -903,10 +981,28 @@ class AppSimulateurBase1(tk.Tk):
             padx=14,
             pady=6,
         )
-        self.send_0100_button.grid(row=0, column=5, padx=5)
+        self.send_message_button.grid(row=0, column=7, padx=5)
 
         console_frame = ttk.LabelFrame(self.server_tab, text="Journal réseau", padding=5)
         console_frame.pack(fill="both", expand=True)
+
+        console_toolbar = ttk.Frame(console_frame)
+        console_toolbar.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 5))
+        tk.Button(
+            console_toolbar,
+            text="Effacer la console",
+            command=self.clear_console,
+            bg="#F8FAFC",
+            fg="#1F2937",
+            activebackground="#E8EEF6",
+            activeforeground="#1F2937",
+            relief="solid",
+            bd=1,
+            cursor="hand2",
+            font=("Segoe UI", 9, "bold"),
+            padx=10,
+            pady=3,
+        ).pack(side="right")
 
         self.console = tk.Text(
             console_frame,
@@ -929,10 +1025,10 @@ class AppSimulateurBase1(tk.Tk):
         self.console.tag_configure("info", foreground="#D7E3ED")
         self.console.tag_configure("raw", foreground="#B0BEC5")
 
-        self.console.grid(row=0, column=0, sticky="nsew")
-        console_y.grid(row=0, column=1, sticky="ns")
-        console_x.grid(row=1, column=0, sticky="ew")
-        console_frame.rowconfigure(0, weight=1)
+        self.console.grid(row=1, column=0, sticky="nsew")
+        console_y.grid(row=1, column=1, sticky="ns")
+        console_x.grid(row=2, column=0, sticky="ew")
+        console_frame.rowconfigure(1, weight=1)
         console_frame.columnconfigure(0, weight=1)
 
     def _build_cbae_tab(self) -> None:
@@ -1516,16 +1612,21 @@ class AppSimulateurBase1(tk.Tk):
         self.console.see("end")
         self.console.configure(state="disabled")
 
+    def clear_console(self) -> None:
+        self.console.configure(state="normal")
+        self.console.delete("1.0", "end")
+        self.console.configure(state="disabled")
+
     def update_counters(self) -> None:
         self.counter_var.set(
             f"RX : 0800={self.count_0800}  0110={self.count_0110}"
-            f"    |    TX : 0810={self.count_0810}  0100={self.count_0100}"
+            f"    |    TX : 0810={self.count_0810}  0100={self.count_0100}  0620={self.count_0620}"
         )
 
     def set_connected_ui(self, connected: bool) -> None:
         self.connect_button.configure(state="disabled" if connected else "normal")
         self.disconnect_button.configure(state="normal" if connected else "disabled")
-        self.send_0100_button.configure(state="normal" if connected else "disabled")
+        self.send_message_button.configure(state="normal" if connected else "disabled")
         self.call_point_combo.configure(state="disabled" if connected else "readonly")
         self.host_entry.configure(state="disabled" if connected else "normal")
         self.port_entry.configure(state="disabled" if connected else "normal")
@@ -1691,7 +1792,7 @@ class AppSimulateurBase1(tk.Tk):
             else:
                 self.log("Réponse d'autorisation 0110 reçue.")
 
-            self.after(0, lambda: self.send_0100_button.configure(state="normal"))
+            self.after(0, lambda: self.send_message_button.configure(state="normal"))
 
         else:
             self.log(f"MTI {parsed['mti']} reçu : aucune réponse automatique configurée.")
@@ -2292,48 +2393,54 @@ class AppSimulateurBase1(tk.Tk):
         populate()
         search_entry.focus_set()
 
-    def trigger_send_0100(self) -> None:
+    def trigger_send_message(self) -> None:
         if self.client_socket is None:
             messagebox.showerror("Non connecté", "Connectez-vous au serveur avant l'envoi.")
             return
 
         try:
-            frame = build_0100_frame(self.pan_var.get(), self.expiry_var.get())
-            parsed = parse_base1(frame[4:])
-            de2 = next(row["value"] for row in parsed["rows"] if row["field"] == 2)
-            de7 = next(row["value"] for row in parsed["rows"] if row["field"] == 7)
-            de14 = next(row["value"] for row in parsed["rows"] if row["field"] == 14)
+            frame, metadata = build_message_frame(
+                self.message_type_var.get(),
+                self.pan_var.get(),
+                self.expiry_var.get(),
+            )
         except Exception as exc:
-            messagebox.showerror("Trame 0100 invalide", str(exc))
+            messagebox.showerror("Trame invalide", str(exc))
             return
 
-        self.send_0100_button.configure(state="disabled")
+        self.send_message_button.configure(state="disabled")
         threading.Thread(
-            target=self._send_0100_worker,
-            args=(frame, de2, de7, de14),
+            target=self._send_message_worker,
+            args=(frame, metadata),
             daemon=True,
         ).start()
 
-    def _send_0100_worker(
-        self,
-        frame: bytes,
-        pan: str,
-        transmission_date_time: str,
-        expiry: str,
-    ) -> None:
+    def _send_message_worker(self, frame: bytes, metadata: dict) -> None:
         try:
             self.send_frame(frame)
-            self.count_0100 += 1
+            mti = metadata["mti"]
+            if mti == "0100":
+                self.count_0100 += 1
+            elif mti == "0620":
+                self.count_0620 += 1
             self.after(0, self.update_counters)
+
+            details = [f"TX {metadata['name']} — MTI {mti}"]
+            if metadata["pan"] != "absent":
+                details.append(f"PAN={metadata['pan']}")
+            if metadata["de7"] != "absent":
+                details.append(f"DE7={metadata['de7']}")
+            if metadata["expiry"] != "absent":
+                details.append(f"expiration={metadata['expiry']}")
+
             self.log(
-                f"TX MTI 0100 — PAN={pan}, DE7={transmission_date_time}, "
-                f"expiration={expiry}\n"
-                f"TX brut : {frame.hex(' ').upper()}\n"
-                "En attente du message 0110."
+                ", ".join(details)
+                + f"\nTX brut : {frame.hex(' ').upper()}"
             )
         except Exception as exc:
-            self.log(f"Erreur pendant l'envoi du 0100 : {exc}")
-            self.after(0, lambda: self.send_0100_button.configure(state="normal"))
+            self.log(f"Erreur pendant l'envoi : {exc}")
+        finally:
+            self.after(0, lambda: self.send_message_button.configure(state="normal"))
 
     # --------------------------------------------------------
     # Onglet parseur manuel

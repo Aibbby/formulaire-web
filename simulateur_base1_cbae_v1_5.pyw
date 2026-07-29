@@ -39,6 +39,7 @@ BASE1_FIELDS: dict[int, FieldSpec] = {
     32:  FieldSpec("Acquiring Institution Identification Code", "var", "bcd",
                    length_bytes=1, length_unit="digits"),
     37:  FieldSpec("Retrieval Reference Number", "fixed", "ebcdic", length=12),
+    38:  FieldSpec("Authorization Identification Response", "fixed", "ebcdic", length=6),
     39:  FieldSpec("Response Code", "fixed", "ebcdic", length=2),
     42:  FieldSpec("Card Acceptor Identification Code", "fixed", "ebcdic", length=15),
     43:  FieldSpec("Card Acceptor Name / Location", "fixed", "ebcdic", length=40),
@@ -327,7 +328,7 @@ import threading
 
 APP_NAME = "Simulateur BASE I & CBAE"
 APP_SUBTITLE = "Parseur de messages ISO8583"
-APP_VERSION = "1.5"
+APP_VERSION = "1.6"
 
 DEFAULT_HOST = "NXLIASM012"
 DEFAULT_PORT = 22201
@@ -421,18 +422,25 @@ def build_0100_frame(pan: str, expiry_yymm: str) -> bytes:
     parsed = parse_base1(payload)
 
     pan_start, pan_end = field_raw_bounds(parsed, 2)
+    date_time_start, date_time_end = field_raw_bounds(parsed, 7)
     exp_start, exp_end = field_raw_bounds(parsed, 14)
 
     pan_bcd = digits_to_bcd(pan)
+    # DE7 ISO 8583 : MMJJhhmmss, calculé au moment exact de l'envoi.
+    transmission_date_time = datetime.datetime.now().strftime("%m%d%H%M%S")
+    transmission_date_time_bcd = digits_to_bcd(transmission_date_time)
     expiry_bcd = digits_to_bcd(expiry_yymm)
 
     if len(pan_bcd) != pan_end - pan_start:
         raise ValueError("La longueur du PAN ne correspond pas à celle de la trame modèle.")
+    if len(transmission_date_time_bcd) != date_time_end - date_time_start:
+        raise ValueError("La longueur du champ 7 est incorrecte dans la trame modèle.")
     if len(expiry_bcd) != exp_end - exp_start:
         raise ValueError("La longueur de la date d'expiration est incorrecte.")
 
     payload_mutable = bytearray(payload)
     payload_mutable[pan_start:pan_end] = pan_bcd
+    payload_mutable[date_time_start:date_time_end] = transmission_date_time_bcd
     payload_mutable[exp_start:exp_end] = expiry_bcd
 
     # H04 est recalculé même si la longueur ne change pas.
@@ -2293,6 +2301,7 @@ class AppSimulateurBase1(tk.Tk):
             frame = build_0100_frame(self.pan_var.get(), self.expiry_var.get())
             parsed = parse_base1(frame[4:])
             de2 = next(row["value"] for row in parsed["rows"] if row["field"] == 2)
+            de7 = next(row["value"] for row in parsed["rows"] if row["field"] == 7)
             de14 = next(row["value"] for row in parsed["rows"] if row["field"] == 14)
         except Exception as exc:
             messagebox.showerror("Trame 0100 invalide", str(exc))
@@ -2301,17 +2310,24 @@ class AppSimulateurBase1(tk.Tk):
         self.send_0100_button.configure(state="disabled")
         threading.Thread(
             target=self._send_0100_worker,
-            args=(frame, de2, de14),
+            args=(frame, de2, de7, de14),
             daemon=True,
         ).start()
 
-    def _send_0100_worker(self, frame: bytes, pan: str, expiry: str) -> None:
+    def _send_0100_worker(
+        self,
+        frame: bytes,
+        pan: str,
+        transmission_date_time: str,
+        expiry: str,
+    ) -> None:
         try:
             self.send_frame(frame)
             self.count_0100 += 1
             self.after(0, self.update_counters)
             self.log(
-                f"TX MTI 0100 — PAN={pan}, expiration={expiry}\n"
+                f"TX MTI 0100 — PAN={pan}, DE7={transmission_date_time}, "
+                f"expiration={expiry}\n"
                 f"TX brut : {frame.hex(' ').upper()}\n"
                 "En attente du message 0110."
             )

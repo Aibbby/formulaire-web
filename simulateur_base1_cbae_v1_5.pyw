@@ -2340,15 +2340,18 @@ class AppSimulateurBase1(tk.Tk):
     # --------------------------------------------------------
 
     def normalize_parser_payload(self, raw: bytes) -> bytes:
-        idx = raw.find(b"\x16\x01\x02")
-        if idx >= 0:
-            if idx >= 4:
-                announced = int.from_bytes(raw[idx-4:idx-2], "big")
-                payload = raw[idx:]
-                if announced == len(payload):
-                    return payload
-            return raw[idx:]
-        raise ValueError("Aucune trame BASE I (16 01 02) trouvée dans les données collées.")
+        marker = b"\x16\x01\x02"
+        pos = raw.find(marker)
+        if pos == -1:
+            raise ValueError("Aucune signature BASE I (16 01 02) trouvée dans les données.")
+
+        if pos >= 4:
+            announced = int.from_bytes(raw[pos-4:pos-2], "big")
+            payload = raw[pos:]
+            if announced == len(payload):
+                return payload
+
+        return raw[pos:]
 
     def paste_parser(self) -> None:
         try:

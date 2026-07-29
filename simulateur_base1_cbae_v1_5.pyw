@@ -683,7 +683,7 @@ class AppSimulateurBase1(tk.Tk):
             font=("Segoe UI", 9, "bold"),
             relief="flat",
         )
-        style.map("Treeview", background=[("selected", "#CCE4FA")])
+        style.map("Treeview", background=[("selected", "#CCE4FA")], foreground=[("selected","#000000")])
         style.configure("TEntry", fieldbackground="#FFFFFF")
         style.configure("TCombobox", fieldbackground="#FFFFFF")
         style.configure(
@@ -2398,12 +2398,6 @@ class AppSimulateurBase1(tk.Tk):
                     row["value"],
                 ),
             )
-        self.parser_tree.update_idletasks()
-        children=self.parser_tree.get_children()
-        if children:
-            self.parser_tree.see(children[0])
-            self.parser_tree.selection_set(children[0])
-            self.parser_tree.focus(children[0])
 
     def on_close(self) -> None:
         try:
